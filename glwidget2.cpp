@@ -62,7 +62,7 @@ void getMatrixAndPrint(){
     for(int i = 0;i <4; ++i){
       qDebug("%f %f %f %f", matrix[i*4+ 0],matrix[i*4+ 1],matrix[i*4+ 2],matrix[i*4+ 3]);
     }
-    qDebug("");
+    qDebug(" ");
 
     glGetFloatv(GL_PROJECTION_MATRIX,matrix);
     for(int i = 0;i <4; ++i){

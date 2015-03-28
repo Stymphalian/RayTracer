@@ -6,7 +6,11 @@
 #include "Utils/linearalgebra.h"
 #include "../glwidget.h"
 
-RayTracer::RayTracer(){}
+RayTracer::RayTracer():epsilon(0.001f){
+    min_dist= 0.0f;
+    max_dist = 2000.0f;
+}
+
 RayTracer::~RayTracer(){}
 
 // void RayTracer::render(QImage& ca,SceneNode& s,std::vector<LightSource*>& l,Camera& cam){
@@ -33,6 +37,7 @@ void RayTracer::render(QImage& ca,WorldModel& model,GLWidget* widget)
     for (int row = 0; row < renderHeight; ++row){
         for(int col = 0; col < renderWidth; ++col){
             ray.calcRay(renderWidth,renderHeight,col,renderHeight - row,camera->pos,camera->focalLength);
+            ray.dir.normalize();
             pixelColor = trace(ray,depth);
 
             // set the pixel color
@@ -48,8 +53,6 @@ void RayTracer::render(QImage& ca,WorldModel& model,GLWidget* widget)
 }
 
 jVec3 RayTracer::trace(Ray& ray,int depth){
-    float min_dist= 0.0f;
-    float max_dist = 2000.0f;
     jVec3 pixelColor(0,0,0);
     jVec3 backgroundColor(0,0,0);
     HitRecord hitRecord;
@@ -69,7 +72,7 @@ jVec3 RayTracer::trace(Ray& ray,int depth){
             pixelColor += hitRecord.hitObject->material.color;
         }else{
             // compute the colour based on materials and lights
-            pixelColor += shade(ray,hitRecord);
+            pixelColor += shade(ray,hitRecord,depth);
 
             // reflection
 
@@ -81,7 +84,7 @@ jVec3 RayTracer::trace(Ray& ray,int depth){
     return pixelColor;
 }
 
-jVec3 RayTracer::shade(Ray& ray,HitRecord& hit){
+jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
     // the hitRecord at this point contains
     // hit // dist // min_dist // max_dist // hitObject // transform
 
@@ -101,18 +104,30 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit){
         LightSource* light = *it;
         jVec3 light_ray = light->getDirection(hitPoint).normalize();
         jVec3 r = 2*(light_ray*surfaceNormal)*surfaceNormal - light_ray;
-        //jVec3 R = (2*(fmax(surfaceNormal*light_ray,0)*surfaceNormal) - light_ray).normalize();
 
         // mabient  = I * K
         pixelColor += light->intensity*material.color.outerProduct(material.ambient);
 
-        // diffuse = I * K * (N*L)
-        pixelColor += light->intensity*material.color.outerProduct(material.diffuse)*fmax(light_ray*surfaceNormal,0);
-        //pixelColor += light->intensity*material.color*fmax(light_ray*surfaceNormal,0);
 
-        // specular =  I * K * (N * R)
-        float spec = pow(fmax(0,viewVector*r),material.shininess);
-        pixelColor += light->intensity*material.color.outerProduct(material.specular)*spec;
+        // Check if we are in shadow
+        Ray new_ray;
+        new_ray.origin = hitPoint;
+        new_ray.dir = light_ray;
+        //qDebug("%f %f %f",v[0],v[1],v[2]);
+        HitRecord hitRecord = scene->queryScene(new_ray,min_dist + 0.01f,max_dist);
+        if( hitRecord.hit == false || hitRecord.hitObject == light){
+            // diffuse = I * K * (N*L)
+            pixelColor += light->intensity*material.color.outerProduct(material.diffuse)*fmax(light_ray*surfaceNormal,0);
+
+            // specular =  I * K * (N * R)^p
+            float spec = pow(fmax(0,viewVector*r),material.shininess);
+            pixelColor += light->intensity*material.color.outerProduct(material.specular)*spec;
+
+            //jVec3 h = (viewVector + light_ray).normalize();
+            // float spec = pow(fmax(0,h*surfaceNormal),material.shininess);
+            // pixelColor += light->intensity*material.color.outerProduct(material.specular)*spec;
+        }
+
     }
     //qDebug("%f %f %f ", pixelColor[0],pixelColor[1],pixelColor[2]);
 

@@ -43,20 +43,21 @@ void WorldModel::setupWorld()
     root->addChild(n);
 
     // Creating a light
-    n = new SceneNode();
-    Primitive* p = new PrimitiveSphere(jVec3(0,0,0),0.1);
-    n->sceneObject = new LightSource(p,1.0f);
-    n->sceneObject->isLight = true;
-    n->sceneObject->material = matFact.get(MaterialFactory::WHITE_LIGHT);
-    n->localTransform.translate(-10,20,5);
-    root->addChild(n);
+     n = new SceneNode();
+     Primitive* p = new PrimitiveSphere(jVec3(0,0,0),0.1);
+     n->sceneObject = new LightSource(p,1.0f);
+     n->sceneObject->isLight = true;
+     n->sceneObject->material = matFact.get(MaterialFactory::WHITE_LIGHT);
+     n->localTransform.translate(-10,20,5);
+     root->addChild(n);
 
     n = new SceneNode();
     p = new PrimitiveSphere(jVec3(0,0,0),0.1);
     n->sceneObject = new LightSource(p,1.0f);
     n->sceneObject->isLight = true;
     n->sceneObject->material = matFact.get(MaterialFactory::WHITE_LIGHT);
-    n->localTransform.translate(8,8,5);
+    //n->localTransform.translate(8,8,5);
+    n->localTransform.translate(9,9,6.6);
     root->addChild(n);
 }
 

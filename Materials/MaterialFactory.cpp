@@ -14,7 +14,7 @@ Material MaterialFactory::get(MATERIAL_E type){
         case(MaterialFactory::WOOD):
             m.set(jVec3(0.6,0,0),
                 jVec3(0.1,0.1,0.1),jVec3(0.65,0.65,0.65),jVec3(0.4,0.4,0.4),
-                16.0,0.0,0.0,0.0);
+                24.0,0.0,0.0,0.0);
             break;
 
         case(MaterialFactory::PINE):

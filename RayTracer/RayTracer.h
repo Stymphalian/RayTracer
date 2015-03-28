@@ -26,13 +26,17 @@ public:
 
     // actual calls that do the work
     jVec3 trace(Ray& ray, int depth);
-    jVec3 shade(Ray& ray, HitRecord& hit);
+    jVec3 shade(Ray& ray, HitRecord& hit,int depth);
 
 protected:
     SceneNode* scene;
     std::vector<LightSource*>* lights;
     QImage* canvas;
     Camera* camera;
+
+    float min_dist;
+    float max_dist;
+    const float epsilon;
 };
 
 #endif
