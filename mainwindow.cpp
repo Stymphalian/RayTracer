@@ -9,8 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionSave_As,SIGNAL(triggered(bool)),this,SLOT(save_as(bool)));
     connect(ui->actionBegin_Ray_Trace,SIGNAL(triggered(bool)),this,SLOT(ray_trace(bool)));
-
     ui->widget->setModel(&model);
+    //ui->widget->setProgressBar(ui->progressBar);
     ui->widget_2->setModel(&model);
 }
 
@@ -32,6 +32,7 @@ void MainWindow::keyPressEvent(QKeyEvent* event){
 
 void MainWindow::save_as(bool value)
 {
+    if(value == false){return;}
     QString fileBuf;
 
     qDebug() << " saving image\n";

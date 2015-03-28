@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <QImage>
+
 #include "Ray.h"
 #include "Models/SceneNode.h"
 #include "Models/Camera.h"
@@ -11,6 +12,7 @@
 
 class Primitive;
 class LightSource;
+class GLWidget;
 
 
 class RayTracer
@@ -19,9 +21,12 @@ public:
     RayTracer();
     virtual ~RayTracer();
 
-    void render(QImage& canvas,WorldModel& model);
+    void render(QImage& canvas,WorldModel& model,GLWidget* widget);
     // void render(QImage& canvas,SceneNode& scene,std::vector<LightSource*>& lights,Camera& cam);
-    jVec3 computePixelColor(Ray& ray, HitRecord& hit);
+
+    // actual calls that do the work
+    jVec3 trace(Ray& ray, int depth);
+    jVec3 shade(Ray& ray, HitRecord& hit);
 
 protected:
     SceneNode* scene;

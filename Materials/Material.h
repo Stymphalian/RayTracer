@@ -7,15 +7,22 @@
 class Material{
 public:
   Material();
+  Material(jVec3 color,jVec3 ambient,jVec3 diffuse, jVec3 specular,
+      float shininess,float reflection,float refraction,float refractionIndex);
   virtual ~Material();
 
   jVec3 color;
+  jVec3 ambient;
+  jVec3 diffuse;
+  jVec3 specular;
+
+  float shininess;
   float reflection;
   float refraction;
   float refractionIndex;
-  float diffuse;
-  float specular;
 
+  void set(jVec3 color,jVec3 ambient,jVec3 diffuse, jVec3 specular,
+    float shininess,float reflection,float refraction,float refractionIndex);
   QRgb colorToQrgb();
 };
 

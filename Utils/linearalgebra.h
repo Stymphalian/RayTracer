@@ -14,6 +14,8 @@ using namespace std;
 #include <fstream>
 #include <limits>
 
+#include <QtOpenGL>
+
 //#include <values.h>  this causes endless trouble for 2 constants
 //one of which is not used !! Mark what were you thinking !
 #include <float.h>
@@ -111,7 +113,10 @@ inline int nearZero(jFlt x)
 void beep();
 
 /*! Computes the absolute value. */
-inline jFlt fltabs ( jFlt );
+inline jFlt fltabs ( jFlt x ){
+  if( x < 0){return -x;}
+  else return x;
+}
 
 /*! Squares a number */
 inline jFlt sqr( jFlt );
@@ -280,6 +285,11 @@ public:
     //! Returns the cross product of two vectors
     inline jVec3 operator^ ( const jVec3& ) const;
 
+    //! Returns the outer product between the two vectors
+    inline jVec3 outerProduct( const jVec3& other){
+      return jVec3(x*other[0], y*other[1],z*other[2]);
+    }
+
     //! Equality test between vectors
     inline bool operator== ( const jVec3& ) const;
 
@@ -297,6 +307,7 @@ public:
 
     /*! Returns the distance given the l-metric distance parameter. */
     inline jFlt ldistance( jFlt l ) const;
+
 
     /*! Non-uniform scale.  Returns a new vector scaled by the three floats
       given. */
@@ -632,17 +643,15 @@ public:
 
     void toidentity(){identity(); }
 
-    virtual void translate(jFlt dx, jFlt dy, jFlt dz, jFlt dw){
-      m[3][0] += dx;
-      m[3][1] += dy;
-      m[3][2] += dz;
-      m[3][3] += dw;
+    virtual void translate(jFlt dx, jFlt dy, jFlt dz){
+      jMat4 t(mTranslate,dx,dy,dz);
+      // *this = t*(*this);
+      *this = (*this)*t;
     }
-    virtual void scale(jFlt dx, jFlt dy, jFlt dz, jFlt dw){
-      m[0][0] = dx;
-      m[1][1] = dy;
-      m[2][2] = dz;
-      m[3][3] = dw;
+    virtual void scale(jFlt dx, jFlt dy, jFlt dz){
+      jMat4 t(mScale,dx,dy,dz);
+      // *this = t*(*this);
+      *this = (*this)*t;
     }
 
     //! B-Spline basis
@@ -658,15 +667,28 @@ public:
     static const jMat4 Mb;
     void pmat();
 
-    void toOpenGLMat(jFlt mat[16]){
+
+    void setValues(    jFlt m00, jFlt m01, jFlt m02, jFlt m03,
+                       jFlt m10, jFlt m11, jFlt m12, jFlt m13,
+                       jFlt m20, jFlt m21, jFlt m22, jFlt m23,
+                       jFlt m30, jFlt m31, jFlt m32, jFlt m33 )
+    {
+        m[0][0] = m00, m[0][1] = m01, m[0][2] = m02, m[0][3] = m03;
+        m[1][0] = m10, m[1][1] = m11, m[1][2] = m12, m[1][3] = m13;
+        m[2][0] = m20, m[2][1] = m21, m[2][2] = m22, m[2][3] = m23;
+        m[3][0] = m30, m[3][1] = m31, m[3][2] = m32, m[3][3] = m33;
+    }
+
+    void toOpenGLMat(GLfloat mat[16]){
       mat[0]  = m[0][0],   mat[1]  = m[0][1],   mat[2]  = m[0][2],  mat[3]  = m[0][3];
       mat[4]  = m[1][0],   mat[5]  = m[1][1],   mat[6]  = m[1][2],  mat[7]  = m[1][3];
       mat[8]  = m[2][0],   mat[9]  = m[2][1],   mat[10] = m[2][2],  mat[11] = m[2][3];
       mat[12] = m[3][0],   mat[13] = m[3][1],   mat[14] = m[3][2],  mat[15] = m[3][3];
     }
 
-private:
+protected:
     jFlt m[4][4];
+private:
 
     void identity ()
     {

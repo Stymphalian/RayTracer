@@ -19,7 +19,7 @@ void Ray::calcRay(double renderWidth, double renderHeight, double col, double ro
     double b = -t;
     double subu = l + (r - l) * (col + 0.5) / renderWidth;
     double subv = b + (t - b) * (row + 0.5) / renderHeight;
-    dir = focalLength * -w + subu * u + subv * v;
+    dir = focalLength*-w + subu * u + subv * v;
 }
 
 

@@ -2,16 +2,38 @@
 #include "Utils/linearalgebra.h"
 #include "Material.h"
 
+Material::Material(jVec3 color,jVec3 ambient,jVec3 diffuse, jVec3 specular,
+    float shininess,float reflection,float refraction,float refractionIndex)
+{
+    set(color,ambient,diffuse,specular,shininess,reflection,refraction,refractionIndex);
+}
+
 Material::Material(){
     color= jVec3(0,0,0);
-    diffuse = 0.1;
-    specular = 0.1;
-    reflection = 0.1;
-    refraction = 0.1;
-    refractionIndex = 0.1;
+    ambient = jVec3(0,0,0);
+    diffuse = jVec3(0,0,0);
+    specular = jVec3(0,0,0);
+
+    shininess = 0.0;
+    reflection = 0.0;
+    refraction = 0.0;
+    refractionIndex = 0.0;
 }
 Material::~Material(){}
 
 QRgb Material::colorToQrgb(){
     return qRgb(color[0],color[1],color[2]);
+}
+
+void Material::set(jVec3 color,jVec3 ambient,jVec3 diffuse, jVec3 specular,
+    float shininess,float reflection,float refraction,float refractionIndex)
+{
+    this->color = color;
+    this->ambient = ambient;
+    this->diffuse = diffuse;
+    this->specular = specular;
+    this->shininess = shininess;
+    this->reflection = refraction;
+    this->refraction = refraction;
+    this->refractionIndex = refractionIndex;
 }

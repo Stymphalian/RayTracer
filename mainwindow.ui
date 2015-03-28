@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1082</width>
+    <width>1274</width>
     <height>591</height>
    </rect>
   </property>
@@ -45,16 +45,26 @@
      <number>0</number>
     </property>
    </widget>
-   <zorder>gridLayoutWidget</zorder>
-   <zorder>widget</zorder>
-   <zorder>progressBar</zorder>
+   <widget class="QPlainTextEdit" name="plainTextEdit">
+    <property name="geometry">
+     <rect>
+      <x>1080</x>
+      <y>10</y>
+      <width>191</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1082</width>
+     <width>1274</width>
      <height>21</height>
     </rect>
    </property>
@@ -67,14 +77,14 @@
    </widget>
    <addaction name="menuFile"/>
   </widget>
-  <action name="actionSave_As">
-   <property name="text">
-    <string>Save As</string>
-   </property>
-  </action>
   <action name="actionBegin_Ray_Trace">
    <property name="text">
     <string>Begin Ray Trace</string>
+   </property>
+  </action>
+  <action name="actionSave_As">
+   <property name="text">
+    <string>Save As</string>
    </property>
   </action>
  </widget>
@@ -85,14 +95,70 @@
    <extends>QWidget</extends>
    <header>glwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>updateProgress(int)</signal>
+    <signal>updateMaxProgress(int)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>GLWidget2</class>
    <extends>QWidget</extends>
    <header>glwidget2.h</header>
    <container>1</container>
+   <slots>
+    <signal>updateUI(QString)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>widget</sender>
+   <signal>updateProgress(int)</signal>
+   <receiver>progressBar</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>36</x>
+     <y>538</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>36</x>
+     <y>566</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>updateMaxProgress(int)</signal>
+   <receiver>progressBar</receiver>
+   <slot>setMaximum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>543</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>69</x>
+     <y>563</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget_2</sender>
+   <signal>updateUI(QString)</signal>
+   <receiver>plainTextEdit</receiver>
+   <slot>setPlainText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1034</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1107</x>
+     <y>105</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

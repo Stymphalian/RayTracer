@@ -15,8 +15,8 @@ public:
     double min_dist;
     double max_dist;
 
-    Primitive* hitObject;
 
+    Primitive* hitObject;
     jMat4 transform;
     //jVec3 normal;
 };

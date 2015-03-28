@@ -86,5 +86,5 @@ void SceneNode::queryScene(Ray& ray, HitRecord& hitRecord, jMat4& transform){
         children[i]->queryScene(ray,hitRecord,candTransform);
     }
 
-    // the result of this function, is the side-effect on the hitRecord
+    // the result of this function, is the side-effect in the hitRecord
 }

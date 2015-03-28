@@ -19,6 +19,7 @@ public:
 protected:
     void setupWorld();
     void setupLights();
+    void _setupLights(std::vector<LightSource*>& lights, SceneNode* node, jMat4& transform);
 };
 
 #endif

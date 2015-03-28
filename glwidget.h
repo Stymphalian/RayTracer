@@ -37,6 +37,18 @@ public:
     void saveImage(QString fileBuf);
     void makeImage();
 
+
+    void _updateProgress(int val){
+        emit updateProgress(val);
+    }
+    void _updateMaxProgress(int val){
+        emit updateMaxProgress(val);
+    }
+
+signals:
+    void updateProgress(int val);
+    void updateMaxProgress(int val);
+
 protected:
     //Initialize the OpenGL Graphics Engine
     void initializeGL();

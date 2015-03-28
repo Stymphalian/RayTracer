@@ -19,13 +19,13 @@ public:
 
     jVec3 pos;
     jVec3 at;
-    jVec3 up;
+    jVec3 up_dir;
     jVec3 dir;
     float focalLength;
 
-    jVec3 u;
-    jVec3 v;
-    jVec3 w;
+    jVec3 forward;
+    jVec3 left;
+    jVec3 up;
     jMat4 rotMatrix;
 };
 

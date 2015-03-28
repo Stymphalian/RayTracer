@@ -12,6 +12,7 @@ public:
   // sphere code
   jVec3 pos;
   double radius;
+  jVec3 radius_vector;
 
   PrimitiveSphere(jVec3 pos, double radius);
   virtual ~PrimitiveSphere();

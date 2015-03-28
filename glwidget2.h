@@ -36,6 +36,9 @@ public:
     void setModel(WorldModel* model);
     void moveCam(QKeyEvent* ev);
 
+signals:
+    void updateUI(QString s);
+
 protected:
     //Initialize the OpenGL Graphics Engine
     void initializeGL();
@@ -61,6 +64,18 @@ protected:
     void RotateY(QVector3D& pVec, double rad);
     void RotateZ(QVector3D& pVec, double rad);
 
+    void SetupMatrices(int type);
+    jMat4 setupcamera(jVec3 eye,jVec3 at,jVec3 up_dir);
+    jMat4 setuportho(float l,float r,float b, float t, float n,float f);
+    jMat4 setupperspective(float l,float r,float b, float t, float n,float f);
+    jMat4 setupproj(float l,float r,float b,float t, float n,float f);
+    jMat4 setupviewport(int x, int y, int w, int h);
+
+    jMat4 Mat_viewport;
+    jMat4 Mat_camera;
+    jMat4 Mat_perspective;
+    int win_w;
+    int win_h;
 
 private:
     WorldModel* model;

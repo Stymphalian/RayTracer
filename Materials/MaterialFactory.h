@@ -7,6 +7,8 @@ class MaterialFactory{
 public:
     enum MATERIAL_E {
         WOOD = 0,
+        PINE,
+        WHITE_LIGHT,
         NUM_MATERIALS
     };
 

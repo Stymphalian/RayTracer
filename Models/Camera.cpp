@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "Camera.h"
 
 Camera::Camera(){
@@ -7,37 +8,33 @@ Camera::Camera(){
 
 Camera::~Camera(){}
 
-void Camera::LookAt(jVec3 eye, jVec3 at, jVec3 up)
+void Camera::LookAt(jVec3 eye, jVec3 at, jVec3 up_dir)
 {
     // modify the pos
-    pos = eye;
+    this->pos = eye;
     // modify the at
     this->at = at;
-    // modify the dir
-    dir = (at - eye).normalize();
     // modify the up
-    this->up = up;
+    this->up_dir = up_dir;
+    // modify the dir
+    this->dir = (at - eye).normalize();
     // set the focal length as the distance between the at and eye
-    // focalLength = (at - eye).length();
+    //focalLength = 1500;
 
-    // set the u,v,w basis vectors
-    w = -dir;
-    u = (up.normalize() ^ w).normalize();
-    v = w ^ u;
 
-    // create the matrix
-    jMat4 rot(
-        u[0],u[1],u[2],0,
-        v[0],v[1],v[2],0,
-        w[0],w[1],w[2],0,
-        0,0,0,1);
-    jMat4 trans(
-        1,0,0,eye[0],
-        0,1,0,eye[1],
-        0,0,1,eye[2],
-        0,0,0,1 );
-    trans = trans.transpose();
-    rotMatrix = rot * trans;
+    forward = -(at-eye).normalize();
+    left = (up_dir^forward).normalize();
+    up = (forward^left).normalize();
+
+    jMat4 translate(1,0,0,-eye[0],
+                    0,1,0,-eye[1],
+                    0,0,1,-eye[2],
+                    0,0,0,1);
+    jMat4 rot(left[0],left[1],left[2],0,
+            up[0],up[1],up[2],0,
+            forward[0],forward[1],forward[2],0,
+            0,0,0,1);
+    rotMatrix = (rot*translate).transpose();
 }
 
 void Camera::LookAt(

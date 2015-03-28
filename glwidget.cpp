@@ -95,7 +95,7 @@ void GLWidget::saveImage( QString fileBuf )
 void GLWidget::makeImage( )
 {
     QImage* img = new QImage(width(), height(), QImage::Format_RGB32);
-    rayTracer.render(*img,*model);
+    rayTracer.render(*img,*model,this);
 
     *qtimage=img->copy(0, 0,  img->width(), img->height());  // this is for subsequent saving
     prepareImageDisplay(img);

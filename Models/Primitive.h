@@ -4,8 +4,8 @@
 #include <QRgb>
 #include "Utils/linearalgebra.h"
 #include "Materials/Material.h"
+#include "RayTracer/HitRecord.h"
 class Ray;
-class HitRecord;
 
 
 // should be used in float comparison calculations

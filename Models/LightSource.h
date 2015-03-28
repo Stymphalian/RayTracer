@@ -3,19 +3,28 @@
 
 #include "Primitive.h"
 
-class LightSource{
+class LightSource : public Primitive {
 public:
-    // variables
+    // These must be set by the world model manager
+    jMat4 local_transform;
+    jMat4 parent_transform;
     jVec3 position;
-    Primitive* shape;
+
+
+    Primitive* wrapped;
     float intensity;
 
     // methods
-    LightSource();
+    LightSource(Primitive* wrappee,float intensity);
     virtual ~LightSource();
 
+    // LightSource methods
     jVec3 getDirection(jVec3& hitPoint);
-    bool intersects(Ray& ray,HitRecord& hitRecord, jMat4& transform);
+
+    // from Primitive
+    virtual void draw(jMat4& transform);
+    virtual bool intersects(Ray& ray,HitRecord& rs, jMat4& transform);
+    virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit);
 };
 
 #endif
