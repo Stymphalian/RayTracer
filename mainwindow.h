@@ -28,3 +28,13 @@ private slots:
 };
 
 #endif // MAINWINDOW_H
+
+/*
+reflections
+refractions
+obj files
+solid surfaces for opengl draw
+materials read from file?
+
+
+*/

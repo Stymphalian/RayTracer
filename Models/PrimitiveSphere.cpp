@@ -42,14 +42,15 @@ PrimitiveSphere::~PrimitiveSphere(){}
 
 void PrimitiveSphere::draw(jMat4& transform){
     glBegin(GL_POINTS);
-    glColor3f(1.0,0.0,0.0);
-     jVec3 v;
-     for(int i = 0;i < (int) vertices.size(); ++i)
-     {
-         v = vertices[i]*transform;
-         //qDebug("%f %f %f --> %f %f %f",vertices[i][0],vertices[i][1],vertices[i][2],v[0],v[1],v[2]);
-         glVertex3f(v[0],v[1],v[2]);
-     }
+
+    glColor3f(material.color[0],material.color[1],material.color[2]);
+    jVec3 v;
+    for(int i = 0;i < (int) vertices.size(); ++i)
+    {
+        v = vertices[i]*transform;
+        //qDebug("%f %f %f --> %f %f %f",vertices[i][0],vertices[i][1],vertices[i][2],v[0],v[1],v[2]);
+        glVertex3f(v[0],v[1],v[2]);
+    }
     glEnd();
 
    //  qDebug("---matrix begin----");

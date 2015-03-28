@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     RayTracer/HitRecord.cpp \
     Utils/stuff.cpp \
     Utils/linearalgebra.cpp \
-    glwidget2.cpp
+    glwidget2.cpp \
+    Models/PrimitiveTriangle.cpp
 
 HEADERS  += mainwindow.h \
     glwidget.h \
@@ -45,6 +46,7 @@ HEADERS  += mainwindow.h \
     RayTracer/HitRecord.h \
     Utils/stuff.h \
     Utils/linearalgebra.h \
-    glwidget2.h
+    glwidget2.h \
+    Models/PrimitiveTriangle.h
 
 FORMS    += mainwindow.ui

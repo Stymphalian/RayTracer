@@ -23,6 +23,7 @@ jVec3 LightSource::getDirection(jVec3& hitPoint){
 }
 
 void LightSource::draw(jMat4& transform){
+    this->wrapped->material = this->material;
     this->wrapped->draw(transform);
 }
 bool LightSource::intersects(Ray& ray,HitRecord& rs, jMat4& transform){

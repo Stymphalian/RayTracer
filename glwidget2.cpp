@@ -84,6 +84,8 @@ void GLWidget2::resizeGL( int winw, int winh )
     glViewport(0,0,winw,winh);
     win_w = winw;
     win_h = winh;
+
+    qDebug("glwdiget 2 %d %d",win_w,win_h);
     //getMatrixAndPrint();
 }
 
@@ -191,7 +193,7 @@ void GLWidget2::paintGL()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // setup the modelviewprojection matrices
-  SetupMatrices(0);
+  SetupMatrices(1);
   this->model->camera.LookAt();
 
   // Draw the 3 major axes

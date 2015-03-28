@@ -1,11 +1,13 @@
 #include <queue>
 #include "WorldModel.h"
 #include "PrimitiveSphere.h"
+#include "PrimitiveTriangle.h"
 #include "Materials/MaterialFactory.h"
 
 WorldModel::WorldModel(){
     // setup the camera
     camera.pos = jVec3(9.85341,21.2548,23.5946);
+    // camera.pos = jVec3(10,0,0);
     camera.at = jVec3(0,0,0);
     camera.dir = (camera.at - camera.pos).normalize();
     camera.focalLength = 1500;
@@ -25,8 +27,9 @@ void WorldModel::setupWorld()
     MaterialFactory matFact;
     root = new SceneNode();
     root->sceneObject = NULL;
+    SceneNode* n;
 
-    SceneNode *n = new SceneNode();
+    n = new SceneNode();
     n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
     n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
     n->localTransform.toidentity();
@@ -42,7 +45,14 @@ void WorldModel::setupWorld()
     n->localTransform.translate(3,3,2.2);
     root->addChild(n);
 
-    // Creating a light
+    n = new SceneNode();
+    n->sceneObject = new PrimitiveTriangle(jVec3(-2,1,0),jVec3(0,0,1),jVec3(0,0,-1));
+    n->sceneObject->material = matFact.get(MaterialFactory::PINE);
+    n->localTransform.scale(3,3,3);
+    n->localTransform.translate(0,-5,0);
+    root->addChild(n);
+
+    // // Creating a light
      n = new SceneNode();
      Primitive* p = new PrimitiveSphere(jVec3(0,0,0),0.1);
      n->sceneObject = new LightSource(p,1.0f);

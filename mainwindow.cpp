@@ -32,7 +32,7 @@ void MainWindow::keyPressEvent(QKeyEvent* event){
 
 void MainWindow::save_as(bool value)
 {
-    if(value == false){return;}
+    //if(value == false){return;}
     QString fileBuf;
 
     qDebug() << " saving image\n";
