@@ -33,58 +33,59 @@ void  PrimitiveTriMesh::draw(jMat4& transform){
     glEnd();
 }
 
-
-bool  PrimitiveTriMesh::_intersects(Ray& ray,HitRecord& rs, jMat4& transform,int index)
+// justin guze - https://github.com/jguze/csc305_graphics
+bool PrimitiveTriMesh::_intersects(Ray& ray,HitRecord& hit,jMat4& transform, int index)
 {
-    // calculate the translated points
-    jVec3 a_trans = vertex_pool[indices[index][0]]*transform;
-    jVec3 b_trans = vertex_pool[indices[index][1]]*transform;
-    jVec3 c_trans = vertex_pool[indices[index][2]]*transform;
+    jVec3 vec_a = (vertex_pool[indices[index][0]]*transform);
+    jVec3 vec_b = (vertex_pool[indices[index][1]]*transform);
+    jVec3 vec_c = (vertex_pool[indices[index][2]]*transform);
 
-    // calculate the variables
-    jVec3 D = ray.dir;
-    jVec3 E1 = b_trans - a_trans;
-    jVec3 E2 = c_trans - a_trans;
-    jVec3 T = ray.origin - a_trans;
+    double t, gamma, beta;
+    double a = vec_a[0] - vec_b[0];
+    double b = vec_a[1] - vec_b[1];
+    double c = vec_a[2] - vec_b[2];
+    double d = vec_a[0] - vec_c[0];
+    double e = vec_a[1] - vec_c[1];
+    double f = vec_a[2] - vec_c[2];
+    double j = vec_a[0] - ray.origin[0];
+    double k = vec_a[1] - ray.origin[1];
+    double l = vec_a[2] - ray.origin[2];
 
-    jVec3 Q = T^E1;
-    jVec3 P = D^E2;
-    float det = P*E1;
+    double ei_hf = (e * ray.dir[2]) -  (f * ray.dir[1]);
+    double gf_di = (f * ray.dir[0]) - (d * ray.dir[2]);
+    double dh_eg = (d * ray.dir[1]) - (e * ray.dir[0]);
 
-    if( very_close(det,0.0,EPSILON)){
+    double M = (a * ei_hf) + (b * gf_di) + (c * dh_eg);
+
+    double ak_jb = (a * k) - (j * b);
+    double jc_al = (j * c) - (a * l);
+    double bl_kc = (b * l) - (k * c);
+
+    t = - ((f * ak_jb) + (e * jc_al) + (d * bl_kc)) / M;
+
+    if (t < hit.min_dist || t > hit.max_dist)
+    {
         return false;
     }
 
-    float inv_det = 1.0f/det;
+    gamma = ((ray.dir[2] * ak_jb) + (ray.dir[1] * jc_al) + (ray.dir[0] * bl_kc)) / M;
 
-    // calculate the u
-    float u = P*T*inv_det;
-    if( u < 0 || very_close(u,0.0f,EPSILON)){
+    if (gamma < 0 || gamma > 1)
+    {
         return false;
     }
 
-    // calculate the v
-    float v = Q*D*inv_det;
-    if( v < 0.0f || very_close(v,0.0f,EPSILON)){
+    beta = ((j * ei_hf) + (k * gf_di) + (l * dh_eg)) / M;
+    if (beta < 0 || beta > (1 - gamma))
+    {
         return false;
     }
 
-    // u + v is too big
-    if( u+v > 1.0f || very_close(u+v,1.0f + EPSILON,EPSILON) ){
-        return false;
-    }
 
-    // calucalute the distance.
-    float t = Q*E2*inv_det;
-    if( t < rs.min_dist || t > rs.max_dist){
-        // out of range
-        return false;
-    }
-
-    rs.hit = true;
-    rs.dist = t;
-    rs.max_dist = t;
-    rs.hitIndex = index;
+    hit.hit = true;
+    hit.dist = t;
+    hit.max_dist = t;
+    hit.hitIndex = index;
     return true;
 }
 
@@ -98,7 +99,6 @@ bool  PrimitiveTriMesh::intersects(Ray& ray,HitRecord& rs, jMat4& transform){
     }
     return rs.hit;
 }
-
 
 // retrieve the normal for a particular index
 jVec3 PrimitiveTriMesh::_getNormal(jMat4& transform,int hitIndex){

@@ -1,4 +1,6 @@
 #include <queue>
+#include "RayTracer/Ray.h"
+#include "RayTracer/HitRecord.h"
 #include "WorldModel.h"
 #include "PrimitiveSphere.h"
 #include "PrimitiveTriangle.h"
@@ -15,6 +17,31 @@ WorldModel::WorldModel(){
     root = NULL;
     setupWorld();
     setupLights();
+
+    PrimitiveTriangle tri(jVec3(0,-1,1),jVec3(0,-1,-1),jVec3(0,2,0));
+    jMat4 transform;
+    transform.toidentity();
+    Ray r;
+    r.origin = jVec3(10,0,0);
+    r.dir = jVec3(-1,0,0);    
+    HitRecord hit;
+    hit.min_dist = 0.0f;
+    hit.max_dist = 2000.0f;
+
+    QElapsedTimer timer;
+    timer.start();
+    for(int i = 0;i < 10000000; ++i){
+        tri.intersects(r,hit,transform);
+    }
+    int nMillisecondsMine = timer.elapsed();
+
+    timer.restart();
+    timer.start();
+    for(int i =0; i< 10000000;++i){
+        tri.intersectsOther(r,hit,transform);
+    }
+    int nMillisecondsOther = timer.elapsed();
+    qDebug("%d %d", nMillisecondsMine,nMillisecondsOther);
 }
 
 WorldModel::~WorldModel(){
