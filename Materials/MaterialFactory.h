@@ -8,6 +8,8 @@ public:
     enum MATERIAL_E {
         WOOD = 0,
         PINE,
+        CHARCOAL,
+        BRONZE,
         WHITE_LIGHT,
         NUM_MATERIALS
     };

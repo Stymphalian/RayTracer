@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     glwidget2.cpp \
     Models/PrimitiveTriangle.cpp \
     Models/PrimitiveTriMesh.cpp \
-    Models/PrimitiveCube.cpp
+    Models/PrimitiveCube.cpp \
+    Models/PrimitivePlane.cpp
 
 HEADERS  += mainwindow.h \
     glwidget.h \
@@ -51,6 +52,7 @@ HEADERS  += mainwindow.h \
     glwidget2.h \
     Models/PrimitiveTriangle.h \
     Models/PrimitiveTriMesh.h \
-    Models/PrimitiveCube.h
+    Models/PrimitiveCube.h \
+    Models/PrimitivePlane.h
 
 FORMS    += mainwindow.ui

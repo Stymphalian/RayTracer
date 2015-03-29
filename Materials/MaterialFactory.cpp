@@ -23,6 +23,18 @@ Material MaterialFactory::get(MATERIAL_E type){
                 16.0,0.0,0.0,0.0);
             break;
 
+        case(MaterialFactory::CHARCOAL):
+            m.set(jVec3(0.12,0.30,0.40),
+                jVec3(0.1,0.1,0.1),jVec3(0.65,0.65,0.65), jVec3(0.4,0.4,0.4),
+                16.0,0.0,0.0,0.0);
+            break;
+
+        case(MaterialFactory::BRONZE):
+            m.set(jVec3(0.22,0.33,0.14),
+                jVec3(0.1,0.1,0.1),jVec3(0.65,0.65,0.65), jVec3(0.4,0.4,0.4),
+                16.0,0.0,0.0,0.0);
+            break;
+
         case(MaterialFactory::WHITE_LIGHT):
             m.set(jVec3(1.0,1.0,1.0),
                 jVec3(0.1,0.1,0.1),jVec3(0.1,0.1,0.1), jVec3(0.8,0.2,0.3),
