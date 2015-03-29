@@ -17,12 +17,10 @@ public:
 
     virtual void draw(jMat4& transform);
     virtual bool intersects(Ray& ray,HitRecord& rs, jMat4& transform);
-    virtual bool intersectsOther(Ray& ray,HitRecord& rs, jMat4& transform);
     virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit);
 
 protected:
     bool  _intersects(Ray& ray,HitRecord& rs, jMat4& transform,int index);
-    bool  _intersectsOther(Ray& ray,HitRecord& rs, jMat4& transform,int index);
     jVec3 _getNormal(jMat4& transform,int hitIndex);
 };
 

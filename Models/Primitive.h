@@ -20,8 +20,8 @@ public:
   Primitive();
   virtual ~Primitive();
 
-  virtual void draw(jMat4& transform) = 0;
-  virtual bool intersects(Ray& ray,HitRecord& rs, jMat4& transform) = 0;
+  virtual void  draw(jMat4& transform) = 0;
+  virtual bool  intersects(Ray& ray,HitRecord& rs, jMat4& transform) = 0;
   virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit) = 0;
 
 protected:

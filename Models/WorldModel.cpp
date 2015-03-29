@@ -4,6 +4,8 @@
 #include "WorldModel.h"
 #include "PrimitiveSphere.h"
 #include "PrimitiveTriangle.h"
+#include "PrimitiveCube.h"
+#include "PrimitiveTriMesh.h"
 #include "Materials/MaterialFactory.h"
 
 WorldModel::WorldModel(){
@@ -17,31 +19,6 @@ WorldModel::WorldModel(){
     root = NULL;
     setupWorld();
     setupLights();
-
-    PrimitiveTriangle tri(jVec3(0,-1,1),jVec3(0,-1,-1),jVec3(0,2,0));
-    jMat4 transform;
-    transform.toidentity();
-    Ray r;
-    r.origin = jVec3(10,0,0);
-    r.dir = jVec3(-1,0,0);    
-    HitRecord hit;
-    hit.min_dist = 0.0f;
-    hit.max_dist = 2000.0f;
-
-    QElapsedTimer timer;
-    timer.start();
-    for(int i = 0;i < 10000000; ++i){
-        tri.intersects(r,hit,transform);
-    }
-    int nMillisecondsMine = timer.elapsed();
-
-    timer.restart();
-    timer.start();
-    for(int i =0; i< 10000000;++i){
-        tri.intersectsOther(r,hit,transform);
-    }
-    int nMillisecondsOther = timer.elapsed();
-    qDebug("%d %d", nMillisecondsMine,nMillisecondsOther);
 }
 
 WorldModel::~WorldModel(){
@@ -74,36 +51,42 @@ void WorldModel::setupWorld()
     root->sceneObject = NULL;
     SceneNode* n;
 
-    n = new SceneNode();
-    n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
-    n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
-    n->localTransform.toidentity();
-    n->localTransform.scale(2,2,2);
-    n->localTransform.translate(0,0,0);
-    root->addChild(n);
-
-    n = new SceneNode();
-    n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
-    n->sceneObject->material = matFact.get(MaterialFactory::PINE);
-    n->localTransform.toidentity();
+    // n = new SceneNode();
+    // n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
+    // n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
+    // n->localTransform.toidentity();
     // n->localTransform.scale(2,2,2);
-    n->localTransform.translate(3,3,2.2);
-    root->addChild(n);
+    // n->localTransform.translate(0,0,0);
+    // root->addChild(n);
+
+    // n = new SceneNode();
+    // n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
+    // n->sceneObject->material = matFact.get(MaterialFactory::PINE);
+    // n->localTransform.toidentity();
+    // // n->localTransform.scale(2,2,2);
+    // n->localTransform.translate(3,3,2.2);
+    // root->addChild(n);
+
+    // n = new SceneNode();
+    // n->sceneObject = new PrimitiveTriangle(jVec3(-2,1,0),jVec3(0,0,1),jVec3(0,0,-1));
+    // n->sceneObject->material = matFact.get(MaterialFactory::PINE);
+    // n->localTransform.scale(3,3,3);
+    // n->localTransform.translate(0,-5,0);
+    // root->addChild(n);
+
+    // n = new SceneNode();
+    // n->sceneObject = createMesh();
+    // n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
+    // n->localTransform.scale(3,3,3);
+    // n->localTransform.translate(0,5,0);
+    // root->addChild(n);
 
     n = new SceneNode();
-    n->sceneObject = new PrimitiveTriangle(jVec3(-2,1,0),jVec3(0,0,1),jVec3(0,0,-1));
+    n->sceneObject = new PrimitiveCube(jVec3(-1,-1,1),jVec3(1,1,-1));
     n->sceneObject->material = matFact.get(MaterialFactory::PINE);
-    n->localTransform.scale(3,3,3);
-    n->localTransform.translate(0,-5,0);
+    //n->localTransform.scale(0.5,0.5,0.5);
+    //n->localTransform.translate(0,-8,0);
     root->addChild(n);
-
-    n = new SceneNode();
-    n->sceneObject = createMesh();
-    n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
-    n->localTransform.scale(3,3,3);
-    n->localTransform.translate(0,5,0);
-    root->addChild(n);
-
 
     // // Creating a light
      n = new SceneNode();

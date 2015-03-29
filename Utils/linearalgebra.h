@@ -342,9 +342,6 @@ public:
     static jVec3 lerp( const jVec3&, const jVec3&, jFlt );
 
     bool jnearZero();
-
-
-
 };
 
 /*!

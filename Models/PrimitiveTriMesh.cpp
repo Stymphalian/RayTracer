@@ -31,6 +31,8 @@ void  PrimitiveTriMesh::draw(jMat4& transform){
         glVertex3f(v[0],v[1],v[2]);
     }
     glEnd();
+
+    glEnableClientState(GL_VERTEX_ARRAY);
 }
 
 // justin guze - https://github.com/jguze/csc305_graphics
