@@ -10,6 +10,7 @@ public:
         PINE,
         CHARCOAL,
         BRONZE,
+        SILVER,
         WHITE_LIGHT,
         NUM_MATERIALS
     };

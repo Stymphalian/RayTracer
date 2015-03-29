@@ -18,6 +18,7 @@ public:
 
   float shininess;
   float reflection;
+  // jVec3 reflection
   float refraction;
   float refractionIndex;
 

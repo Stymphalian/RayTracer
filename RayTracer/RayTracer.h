@@ -25,8 +25,8 @@ public:
     // void render(QImage& canvas,SceneNode& scene,std::vector<LightSource*>& lights,Camera& cam);
 
     // actual calls that do the work
-    jVec3 trace(Ray& ray, int depth);
-    jVec3 shade(Ray& ray, HitRecord& hit,int depth);
+    jVec3 trace(Ray& ray, float refractionIndex,int depth);
+    jVec3 shade(Ray& ray, HitRecord& hit,float refractionIndex,int depth);
 
 protected:
     SceneNode* scene;
@@ -34,6 +34,8 @@ protected:
     QImage* canvas;
     Camera* camera;
 
+    int max_depth;
+    float defaultRefractionIndex;
     float min_dist;
     float max_dist;
     const float epsilon;

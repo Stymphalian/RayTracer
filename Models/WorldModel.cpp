@@ -72,12 +72,12 @@ void WorldModel::setupWorld()
     n->sceneObject = new PrimitiveTriangle(jVec3(-2,1,0),jVec3(0,0,1),jVec3(0,0,-1));
     n->sceneObject->material = matFact.get(MaterialFactory::PINE);
     n->localTransform.scale(3,3,3);
-    n->localTransform.translate(0,-5,0);
+    n->localTransform.translate(0,-1,-3);
     root->addChild(n);
 
     n = new SceneNode();
     n->sceneObject = createMesh();
-    n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
+    n->sceneObject->material = matFact.get(MaterialFactory::SILVER);
     n->localTransform.scale(3,3,3);
     n->localTransform.translate(0,5,0);
     root->addChild(n);
@@ -93,7 +93,7 @@ void WorldModel::setupWorld()
     n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
     n->sceneObject->material = matFact.get(MaterialFactory::BRONZE);
     n->localTransform.scale(10,10,10);
-    n->localTransform.translate(0,-15,0);
+    n->localTransform.translate(0,-2,0);
     root->addChild(n);
 
     // // Creating a light

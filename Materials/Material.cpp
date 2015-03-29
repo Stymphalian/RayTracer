@@ -33,7 +33,7 @@ void Material::set(jVec3 color,jVec3 ambient,jVec3 diffuse, jVec3 specular,
     this->diffuse = diffuse;
     this->specular = specular;
     this->shininess = shininess;
-    this->reflection = refraction;
+    this->reflection = reflection;
     this->refraction = refraction;
     this->refractionIndex = refractionIndex;
 }

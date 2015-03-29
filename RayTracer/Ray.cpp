@@ -38,3 +38,21 @@ void Ray::calcUVW(jVec3 gaze, jVec3 up){
 jVec3 Ray::getPoint(double dist){
     return (origin + dist*dir);
 }
+
+Ray Ray::reflect(jVec3& origin,jVec3& normal){
+    Ray r;
+    r.origin = origin;
+    r.dir = (dir - 2*(dir*normal)*normal).normalize();
+    return r;
+}
+
+Ray Ray::refract(jVec3& origin,jVec3& dir,jVec3& normal,float inRefractIndex,float outRefractIndex){
+    Ray r;
+    r.origin = origin;
+    float dn = dir*normal;
+    float ratio = inRefractIndex/outRefractIndex;
+    jVec3 temp = dir - normal*(dir*normal)*ratio;
+    r.dir = temp - normal*sqrt(1 - (ratio*ratio*( 1 - (dn*dn))));
+    r.dir.normalize();
+    return r;
+}

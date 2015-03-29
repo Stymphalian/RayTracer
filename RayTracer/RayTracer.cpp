@@ -7,8 +7,10 @@
 #include "../glwidget.h"
 
 RayTracer::RayTracer():epsilon(0.001f){
-    min_dist= 0.0f;
+    min_dist= 0.001f;
     max_dist = 2000.0f;
+    max_depth = 3;
+    defaultRefractionIndex = 1.0f;
 }
 
 RayTracer::~RayTracer(){}
@@ -22,7 +24,6 @@ void RayTracer::render(QImage& ca,WorldModel& model,GLWidget* widget)
     this->canvas = &ca;
 
     Ray ray;
-    int depth = 1;
     int renderWidth = canvas->width();
     int renderHeight = canvas->height();
     jVec3 pixelColor(0,0,0);
@@ -38,7 +39,7 @@ void RayTracer::render(QImage& ca,WorldModel& model,GLWidget* widget)
         for(int col = 0; col < renderWidth; ++col){
             ray.calcRay(renderWidth,renderHeight,col,renderHeight - row,camera->pos,camera->focalLength);
             ray.dir.normalize();
-            pixelColor = trace(ray,depth);
+            pixelColor = trace(ray,defaultRefractionIndex,max_depth);
 
             // set the pixel color
             canvas->setPixel(col,row,qRgb(pixelColor[0]*255,pixelColor[1]*255,pixelColor[2]*255));
@@ -52,7 +53,7 @@ void RayTracer::render(QImage& ca,WorldModel& model,GLWidget* widget)
     widget->_updateProgress(100);
 }
 
-jVec3 RayTracer::trace(Ray& ray,int depth){
+jVec3 RayTracer::trace(Ray& ray,float refractionIndex,int depth){
     jVec3 pixelColor(0,0,0);
     jVec3 backgroundColor(0,0,0);
     HitRecord hitRecord;
@@ -72,11 +73,7 @@ jVec3 RayTracer::trace(Ray& ray,int depth){
             pixelColor += hitRecord.hitObject->material.color;
         }else{
             // compute the colour based on materials and lights
-            pixelColor += shade(ray,hitRecord,depth);
-
-            // reflection
-
-            // refraction
+            pixelColor += shade(ray,hitRecord,refractionIndex,depth);
         }
 
     }
@@ -84,7 +81,7 @@ jVec3 RayTracer::trace(Ray& ray,int depth){
     return pixelColor;
 }
 
-jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
+jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,float refractionIndex,int depth){
     // the hitRecord at this point contains
     // hit // dist // min_dist // max_dist // hitObject // transform
 
@@ -129,7 +126,19 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
         }
 
     }
-    //qDebug("%f %f %f ", pixelColor[0],pixelColor[1],pixelColor[2]);
+
+    // reflection
+    if( material.reflection > 0.0f){
+        Ray reflectRay = ray.reflect(hitPoint,surfaceNormal);
+        pixelColor += material.reflection*trace(reflectRay,refractionIndex,depth-1);
+    }
+
+    // refraction
+    if( material.refraction > 0.0f){
+//        Ray refractRay = ray.refract(hitPoint,surfaceNormal,refractionIndex,
+//            material.refractionIndex);
+
+    }
 
     pixelColor[0]=fmin(pixelColor[0],1);
     pixelColor[1]=fmin(pixelColor[1],1);

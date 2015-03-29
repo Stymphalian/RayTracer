@@ -14,7 +14,7 @@ Material MaterialFactory::get(MATERIAL_E type){
         case(MaterialFactory::WOOD):
             m.set(jVec3(0.6,0,0),
                 jVec3(0.1,0.1,0.1),jVec3(0.65,0.65,0.65),jVec3(0.4,0.4,0.4),
-                24.0,0.0,0.0,0.0);
+                24.0,0.3,0.0,0.0);
             break;
 
         case(MaterialFactory::PINE):
@@ -24,15 +24,21 @@ Material MaterialFactory::get(MATERIAL_E type){
             break;
 
         case(MaterialFactory::CHARCOAL):
-            m.set(jVec3(0.12,0.30,0.40),
+            m.set(jVec3(0.12,0.05,0.08),
                 jVec3(0.1,0.1,0.1),jVec3(0.65,0.65,0.65), jVec3(0.4,0.4,0.4),
-                16.0,0.0,0.0,0.0);
+                0.0,0.0,0.0,0.0);
             break;
 
         case(MaterialFactory::BRONZE):
             m.set(jVec3(0.22,0.33,0.14),
                 jVec3(0.1,0.1,0.1),jVec3(0.65,0.65,0.65), jVec3(0.4,0.4,0.4),
-                16.0,0.0,0.0,0.0);
+                32.0,0.78,0.0,0.0);
+            break;
+
+        case(MaterialFactory::SILVER):
+            m.set(jVec3(0,0,0),
+                jVec3(0.05,0.05,0.05),jVec3(0.1,0.1,0.1), jVec3(0.6,0.6,0.6),
+                32.0,0.4,0.0,0.0);
             break;
 
         case(MaterialFactory::WHITE_LIGHT):
