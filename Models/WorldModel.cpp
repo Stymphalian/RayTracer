@@ -22,6 +22,24 @@ WorldModel::~WorldModel(){
     lights.clear();
 }
 
+PrimitiveTriMesh* createMesh(){
+    PrimitiveTriMesh* mesh = new PrimitiveTriMesh();
+
+    mesh->vertex_pool.push_back(jVec3(0,0,1));
+    mesh->vertex_pool.push_back(jVec3(1,0,1));
+    mesh->vertex_pool.push_back(jVec3(1,0,0));
+    mesh->vertex_pool.push_back(jVec3(1,0,-1));
+    mesh->vertex_pool.push_back(jVec3(0,0,-1));
+    mesh->vertex_pool.push_back(jVec3(-1,0,-1));
+    mesh->vertex_pool.push_back(jVec3(-1,0,0));
+    mesh->vertex_pool.push_back(jVec3(-1,0,1));
+    mesh->indices.push_back(jVec3(0,1,2));
+    mesh->indices.push_back(jVec3(2,3,4));
+    mesh->indices.push_back(jVec3(4,5,6));
+    mesh->indices.push_back(jVec3(6,7,0));
+    return mesh;
+}
+
 void WorldModel::setupWorld()
 {
     MaterialFactory matFact;
@@ -51,6 +69,14 @@ void WorldModel::setupWorld()
     n->localTransform.scale(3,3,3);
     n->localTransform.translate(0,-5,0);
     root->addChild(n);
+
+    n = new SceneNode();
+    n->sceneObject = createMesh();
+    n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
+    n->localTransform.scale(3,3,3);
+    n->localTransform.translate(0,5,0);
+    root->addChild(n);
+
 
     // // Creating a light
      n = new SceneNode();

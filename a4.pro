@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     Utils/stuff.cpp \
     Utils/linearalgebra.cpp \
     glwidget2.cpp \
-    Models/PrimitiveTriangle.cpp
+    Models/PrimitiveTriangle.cpp \
+    Models/PrimitiveTriMesh.cpp
 
 HEADERS  += mainwindow.h \
     glwidget.h \
@@ -47,6 +48,7 @@ HEADERS  += mainwindow.h \
     Utils/stuff.h \
     Utils/linearalgebra.h \
     glwidget2.h \
-    Models/PrimitiveTriangle.h
+    Models/PrimitiveTriangle.h \
+    Models/PrimitiveTriMesh.h
 
 FORMS    += mainwindow.ui

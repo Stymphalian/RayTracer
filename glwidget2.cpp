@@ -51,6 +51,7 @@ void GLWidget2::initializeGL()
 
      // allow the specification of geometry using vertex arrays.
      glEnableClientState(GL_VERTEX_ARRAY);
+     glEnableClientState(GL_COLOR_ARRAY);
      glLoadIdentity();
      //glPointSize(5);
 }

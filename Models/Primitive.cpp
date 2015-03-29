@@ -12,3 +12,7 @@ Primitive::Primitive(){
     isLight = false;
 }
 Primitive::~Primitive(){}
+
+bool Primitive::very_close(float v,float v2, float e){
+    return (v - v2 < e && v- v2 > -e);
+}
