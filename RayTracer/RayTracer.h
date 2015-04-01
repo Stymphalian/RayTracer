@@ -39,6 +39,10 @@ protected:
     float min_dist;
     float max_dist;
     const float epsilon;
+
+    jVec3 refract(Ray& ray,HitRecord& hitRecord,Material& material,jVec3& hitPoint,
+        jVec3& normal, float refractionIndex,int depth);
+    float getSchlickApproximation(float refractionIndex,float cos_theta);
 };
 
 #endif

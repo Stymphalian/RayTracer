@@ -11,6 +11,7 @@ public:
         CHARCOAL,
         BRONZE,
         SILVER,
+        GLASS,
         WHITE_LIGHT,
         NUM_MATERIALS
     };

@@ -20,7 +20,8 @@ public:
     void calcUVW(jVec3& gaze, jVec3& up);
     void calcUVW(jVec3 gaze, jVec3 up);
     Ray reflect(jVec3& origin,jVec3& normal);
-    Ray refract(jVec3& origin,jVec3& dir,jVec3& normal,float inRefractIndex,float outRefractIndex);
+    bool refract(jVec3& origin,jVec3& dir,jVec3& normal,
+                float inRefractIndex,float outRefractIndex,Ray* output_ray);
 
     jVec3 getPoint(double dist);
 };

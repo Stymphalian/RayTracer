@@ -55,6 +55,7 @@ void WorldModel::setupWorld()
     n = new SceneNode();
     n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
     n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
+    // n->sceneObject->material = matFact.get(MaterialFactory::GLASS);
     n->localTransform.toidentity();
     n->localTransform.scale(2,2,2);
     n->localTransform.translate(0,0,0);
@@ -65,7 +66,17 @@ void WorldModel::setupWorld()
     n->sceneObject->material = matFact.get(MaterialFactory::PINE);
     n->localTransform.toidentity();
     // n->localTransform.scale(2,2,2);
-    n->localTransform.translate(3,3,2.2);
+    // n->localTransform.translate(3,3,2.2);
+    n->localTransform.translate(3,3,1.2);
+    root->addChild(n);
+
+    n = new SceneNode();
+    n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
+    n->sceneObject->material = matFact.get(MaterialFactory::PINE);
+    n->localTransform.toidentity();
+    // n->localTransform.scale(2,2,2);
+    // n->localTransform.translate(3,3,2.2);
+    n->localTransform.translate(-1,0,-3);
     root->addChild(n);
 
     n = new SceneNode();

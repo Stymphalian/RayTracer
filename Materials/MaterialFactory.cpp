@@ -14,37 +14,51 @@ Material MaterialFactory::get(MATERIAL_E type){
         case(MaterialFactory::WOOD):
             m.set(jVec3(0.6,0,0),
                 jVec3(0.1,0.1,0.1),jVec3(0.65,0.65,0.65),jVec3(0.4,0.4,0.4),
-                24.0,0.3,0.0,0.0);
+                24.0,0.3,
+                0.0,0.0,jVec3(0,0,0));
             break;
 
         case(MaterialFactory::PINE):
             m.set(jVec3(0,0.68,0.14),
                 jVec3(0.1,0.1,0.1),jVec3(0.65,0.65,0.65), jVec3(0.4,0.4,0.4),
-                16.0,0.0,0.0,0.0);
+                16.0,0.0,
+                0.0,0.0,jVec3(0,0,0));
             break;
 
         case(MaterialFactory::CHARCOAL):
             m.set(jVec3(0.12,0.05,0.08),
                 jVec3(0.1,0.1,0.1),jVec3(0.65,0.65,0.65), jVec3(0.4,0.4,0.4),
-                0.0,0.0,0.0,0.0);
+                0.0,0.0,
+                0.0,0.0,jVec3(0,0,0));
             break;
 
         case(MaterialFactory::BRONZE):
             m.set(jVec3(0.22,0.33,0.14),
                 jVec3(0.1,0.1,0.1),jVec3(0.65,0.65,0.65), jVec3(0.4,0.4,0.4),
-                32.0,0.78,0.0,0.0);
+                32.0,0.78,
+                // 32.0,0.0,
+                0.0,0.0,jVec3(0,0,0));
             break;
 
         case(MaterialFactory::SILVER):
             m.set(jVec3(0,0,0),
                 jVec3(0.05,0.05,0.05),jVec3(0.1,0.1,0.1), jVec3(0.6,0.6,0.6),
-                32.0,0.4,0.0,0.0);
+                32.0,0.4,
+                0.0,0.0,jVec3(0,0,0));
+            break;
+
+        case(MaterialFactory::GLASS):
+            m.set(jVec3(0,0.08,0.12),
+                jVec3(0.05,0.05,0.05),jVec3(0.-5,0.05,0.05), jVec3(0,0,0),
+                3.0,0.28,
+                0.8,1.40,jVec3(0.4,0.4,0.3));
             break;
 
         case(MaterialFactory::WHITE_LIGHT):
             m.set(jVec3(1.0,1.0,1.0),
                 jVec3(0.1,0.1,0.1),jVec3(0.1,0.1,0.1), jVec3(0.8,0.2,0.3),
-                0.3,0.0,0.0,0.0);
+                0.3,0.0,
+                0.0,0.0,jVec3(0,0,0));
             break;
         default:
             break;

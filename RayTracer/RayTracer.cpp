@@ -1,4 +1,5 @@
 #include <QImage>
+#include <cassert>
 #include "RayTracer.h"
 #include "HitRecord.h"
 #include "Models/SceneNode.h"
@@ -63,9 +64,7 @@ jVec3 RayTracer::trace(Ray& ray,float refractionIndex,int depth){
         return backgroundColor;
     }
 
-    // reset the pixel color
     hitRecord = scene->queryScene(ray,min_dist,max_dist);
-
     if(hitRecord.hit == false){
         pixelColor += backgroundColor;
     }else{
@@ -110,7 +109,6 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,float refractionIndex,int depth){
         Ray new_ray;
         new_ray.origin = hitPoint;
         new_ray.dir = light_ray;
-        //qDebug("%f %f %f",v[0],v[1],v[2]);
         HitRecord hitRecord = scene->queryScene(new_ray,min_dist + 0.01f,max_dist);
         if( hitRecord.hit == false || hitRecord.hitObject == light){
             // diffuse = I * K * (N*L)
@@ -128,20 +126,74 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,float refractionIndex,int depth){
     }
 
     // reflection
+    jVec3 reflectColor(0,0,0);
     if( material.reflection > 0.0f){
         Ray reflectRay = ray.reflect(hitPoint,surfaceNormal);
-        pixelColor += material.reflection*trace(reflectRay,refractionIndex,depth-1);
+        reflectColor += material.reflection*trace(reflectRay,refractionIndex,depth-1);
     }
 
     // refraction
-    if( material.refraction > 0.0f){
-//        Ray refractRay = ray.refract(hitPoint,surfaceNormal,refractionIndex,
-//            material.refractionIndex);
+    jVec3 refractColor(0,0,0);
+    // if( material.refraction){
+    //     refractColor += refract(ray,hit,material,hitPoint,surfaceNormal,refractionIndex,depth);
+    // }
 
-    }
+    pixelColor += reflectColor;
+    pixelColor += refractColor;
 
     pixelColor[0]=fmin(pixelColor[0],1);
     pixelColor[1]=fmin(pixelColor[1],1);
     pixelColor[2]=fmin(pixelColor[2],1);
     return pixelColor;
+}
+
+jVec3 RayTracer::refract(Ray& ray,HitRecord& hitRecord,Material& material,jVec3& hitPoint,
+        jVec3& normal, float refractionIndex,int depth)
+{
+    if( material.refraction <= 0.0f ){
+        return jVec3(0,0,0);
+    }
+
+    Ray refract_ray;
+    float cos_theta;
+    jVec3 transparency(0,0,0);
+    float new_refraction_index = 0.0;
+
+    if( ray.dir*normal < 0.0f){
+        // outside
+        bool rs = ray.refract(hitPoint,ray.dir, normal,refractionIndex,
+            material.refractionIndex,&refract_ray);
+        assert(rs == true);
+        cos_theta = -ray.dir*normal;
+        transparency = jVec3(1,1,1);
+        new_refraction_index = material.refractionIndex;
+
+    }else{
+        // inside
+        float dist = (ray.origin - hitPoint).length();
+        transparency[0] = exp(material.refractionAttenuation[0]*dist);
+        transparency[1] = exp(material.refractionAttenuation[1]*dist);
+        transparency[2] = exp(material.refractionAttenuation[2]*dist);
+
+        // FUCKING HACKED,the outgoing refaraction index
+        bool rs = ray.refract(hitPoint,ray.dir, normal,refractionIndex,1.0f,&refract_ray);
+        if( rs ){
+            cos_theta =  refract_ray.dir*normal;
+            new_refraction_index = 1.0f;
+        }else{
+            // total internal reflection
+            return transparency*trace(ray,1.0f,depth-1);
+        }
+    }
+
+    float R = getSchlickApproximation(refractionIndex,cos_theta);
+    return transparency*(1-R)*trace(refract_ray,new_refraction_index,depth-1);
+}
+
+float RayTracer::getSchlickApproximation(float refractionIndex,float cos_theta){
+    float R0 = (refractionIndex - 1)*(refractionIndex - 1)/(refractionIndex+1)*(refractionIndex+1);
+    float power = (1-cos_theta)*(1-cos_theta);
+    power *= power;
+    power *= (1-cos_theta);
+    return R0 + (1-R0)*power;
 }

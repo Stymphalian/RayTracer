@@ -3,9 +3,11 @@
 #include "Material.h"
 
 Material::Material(jVec3 color,jVec3 ambient,jVec3 diffuse, jVec3 specular,
-    float shininess,float reflection,float refraction,float refractionIndex)
+    float shininess,float reflection,
+    float refraction,float refractionIndex,jVec3 refractionAttenuation)
 {
-    set(color,ambient,diffuse,specular,shininess,reflection,refraction,refractionIndex);
+    set(color,ambient,diffuse,specular,shininess,reflection,
+        refraction,refractionIndex,refractionAttenuation);
 }
 
 Material::Material(){
@@ -18,6 +20,7 @@ Material::Material(){
     reflection = 0.0;
     refraction = 0.0;
     refractionIndex = 0.0;
+    refractionAttenuation = jVec3(0,0,0);
 }
 Material::~Material(){}
 
@@ -26,7 +29,8 @@ QRgb Material::colorToQrgb(){
 }
 
 void Material::set(jVec3 color,jVec3 ambient,jVec3 diffuse, jVec3 specular,
-    float shininess,float reflection,float refraction,float refractionIndex)
+    float shininess,float reflection,
+    float refraction,float refractionIndex,jVec3 refractionAttenuation)
 {
     this->color = color;
     this->ambient = ambient;
@@ -36,4 +40,5 @@ void Material::set(jVec3 color,jVec3 ambient,jVec3 diffuse, jVec3 specular,
     this->reflection = reflection;
     this->refraction = refraction;
     this->refractionIndex = refractionIndex;
+    this->refractionAttenuation = refractionAttenuation;
 }
