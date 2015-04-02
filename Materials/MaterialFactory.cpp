@@ -33,7 +33,7 @@ Material MaterialFactory::get(MATERIAL_E type){
             break;
 
         case(MaterialFactory::BRONZE):
-            m.set(jVec3(0.22,0.33,0.14),
+            m.set(jVec3(0.8,0.8,0.8),
                 jVec3(0.1,0.1,0.1),jVec3(0.65,0.65,0.65), jVec3(0.4,0.4,0.4),
                 32.0,0.78,
                 // 32.0,0.0,

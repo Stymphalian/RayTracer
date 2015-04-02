@@ -1,11 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "Utils/ObjFileReader.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    ObjFileReader reader;
+    reader.test();
+    //reader.read("test.obj",&obj_model);
 
     connect(ui->actionSave_As,SIGNAL(triggered(bool)),this,SLOT(save_as(bool)));
     connect(ui->actionBegin_Ray_Trace,SIGNAL(triggered(bool)),this,SLOT(ray_trace(bool)));

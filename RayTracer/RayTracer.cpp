@@ -101,9 +101,11 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,float refractionIndex,int depth){
         jVec3 light_ray = light->getDirection(hitPoint).normalize();
         jVec3 r = 2*(light_ray*surfaceNormal)*surfaceNormal - light_ray;
 
-        // mabient  = I * K
-        pixelColor += light->intensity*material.color.outerProduct(material.ambient);
+        jVec3 matcolor = material.color.outerProduct(light->getEmmitance());
 
+        // ambient  = I * K
+        // pixelColor += light->intensity*material.color.outerProduct(material.ambient);
+        pixelColor += light->intensity*matcolor.outerProduct(material.ambient);
 
         // Check if we are in shadow
         Ray new_ray;
@@ -112,11 +114,13 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,float refractionIndex,int depth){
         HitRecord hitRecord = scene->queryScene(new_ray,min_dist + 0.01f,max_dist);
         if( hitRecord.hit == false || hitRecord.hitObject == light){
             // diffuse = I * K * (N*L)
-            pixelColor += light->intensity*material.color.outerProduct(material.diffuse)*fmax(light_ray*surfaceNormal,0);
+            // pixelColor += light->intensity*material.color.outerProduct(material.diffuse)*fmax(light_ray*surfaceNormal,0);
+            pixelColor += light->intensity*matcolor.outerProduct(material.diffuse)*fmax(light_ray*surfaceNormal,0);
 
             // specular =  I * K * (N * R)^p
             float spec = pow(fmax(0,viewVector*r),material.shininess);
-            pixelColor += light->intensity*material.color.outerProduct(material.specular)*spec;
+            // pixelColor += light->intensity*material.color.outerProduct(material.specular)*spec;
+            pixelColor += light->intensity*matcolor.outerProduct(material.specular)*spec;
 
             //jVec3 h = (viewVector + light_ray).normalize();
             // float spec = pow(fmax(0,h*surfaceNormal),material.shininess);

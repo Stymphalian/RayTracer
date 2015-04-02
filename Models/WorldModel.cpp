@@ -113,7 +113,7 @@ void WorldModel::setupWorld()
      n->sceneObject = new LightSource(p,1.0f);
      n->sceneObject->isLight = true;
      n->sceneObject->material = matFact.get(MaterialFactory::WHITE_LIGHT);
-     n->localTransform.translate(-10,20,5);
+     n->localTransform.translate(-10,10,-5);
      root->addChild(n);
 
     n = new SceneNode();

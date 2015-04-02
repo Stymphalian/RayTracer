@@ -1900,5 +1900,38 @@ protected:
     jFlt x,y,z,h;
 };
 
+jVec4 jVec4::operator* ( const jMat4& M ) const
+{
+    return jVec4(x*M.ij(0,0)+y*M.ij(1,0)+z*M.ij(2,0)+h*M.ij(3,0),
+                  x*M.ij(0,1)+y*M.ij(1,1)+z*M.ij(2,1)+h*M.ij(3,1),
+                  x*M.ij(0,2)+y*M.ij(1,2)+z*M.ij(2,2)+h*M.ij(3,2),
+                  x*M.ij(0,3)+y*M.ij(1,3)+z*M.ij(2,3)+h*M.ij(3,3));
+}
+
+void jVec4::operator *= ( const jMat4& M )
+{
+    *this = *this*M;
+}
+
+
+jFlt& jVec4::operator[] ( int i )
+{
+  switch(i){
+    case(0): return x;
+    case(1): return y;
+    case(2): return z;
+    case(3): return h;
+  }
+}
+jFlt  jVec4::operator[] ( int i ) const
+{
+  switch(i){
+    case(0): return x;
+    case(1): return y;
+    case(2): return z;
+    case(3): return h;
+  }
+}
+
 
 #endif

@@ -22,6 +22,10 @@ jVec3 LightSource::getDirection(jVec3& hitPoint){
     return (position - hitPoint);
 }
 
+jVec3 LightSource::getEmmitance(){
+    return this->intensity*this->wrapped->material.color;
+}
+
 void LightSource::draw(jMat4& transform){
     this->wrapped->material = this->material;
     this->wrapped->draw(transform);

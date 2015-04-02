@@ -20,6 +20,7 @@ public:
 
     // LightSource methods
     jVec3 getDirection(jVec3& hitPoint);
+    jVec3 getEmmitance();
 
     // from Primitive
     virtual void draw(jMat4& transform);

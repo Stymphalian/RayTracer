@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     Models/PrimitiveTriangle.cpp \
     Models/PrimitiveTriMesh.cpp \
     Models/PrimitiveCube.cpp \
-    Models/PrimitivePlane.cpp
+    Models/PrimitivePlane.cpp \
+    Utils/ObjFileReader.cpp
 
 HEADERS  += mainwindow.h \
     glwidget.h \
@@ -53,6 +54,7 @@ HEADERS  += mainwindow.h \
     Models/PrimitiveTriangle.h \
     Models/PrimitiveTriMesh.h \
     Models/PrimitiveCube.h \
-    Models/PrimitivePlane.h
+    Models/PrimitivePlane.h \
+    Utils/ObjFileReader.h
 
 FORMS    += mainwindow.ui
