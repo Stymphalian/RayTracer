@@ -8,8 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ObjFileReader reader;
-    reader.test();
+    //ObjFileReader reader;
+    //reader.test();
     //reader.read("test.obj",&obj_model);
 
     connect(ui->actionSave_As,SIGNAL(triggered(bool)),this,SLOT(save_as(bool)));

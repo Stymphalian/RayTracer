@@ -8,6 +8,7 @@
 #include "PrimitiveTriMesh.h"
 #include "PrimitivePlane.h"
 #include "Materials/MaterialFactory.h"
+#include "Utils/ObjFileReader.h"
 
 WorldModel::WorldModel(){
     // setup the camera
@@ -107,14 +108,32 @@ void WorldModel::setupWorld()
     n->localTransform.translate(0,-2,0);
     root->addChild(n);
 
+    ObjFileReader reader;
+    ObjFileReader::Obj_Model obj_model;
+    reader.read("icosahedron.obj",&obj_model);
+    n = new SceneNode();
+    PrimitiveTriMesh* mesh = new PrimitiveTriMesh();
+    mesh->vertex_pool = obj_model.vertices;
+    mesh->indices = obj_model.vertex_indices;
+    for( int i = 0;i < mesh->indices.size(); ++i){
+        mesh->indices[i][0] = mesh->indices[i][0] - 1;
+        mesh->indices[i][1] = mesh->indices[i][1] - 1;
+        mesh->indices[i][2] = mesh->indices[i][2] - 1;
+    }
+    n->sceneObject = mesh;
+    n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
+    n->localTransform.scale(2,2,2);
+    n->localTransform.translate(5,2,0);
+    root->addChild(n);
+
     // // Creating a light
-     n = new SceneNode();
-     Primitive* p = new PrimitiveSphere(jVec3(0,0,0),0.1);
-     n->sceneObject = new LightSource(p,1.0f);
-     n->sceneObject->isLight = true;
-     n->sceneObject->material = matFact.get(MaterialFactory::WHITE_LIGHT);
-     n->localTransform.translate(-10,10,-5);
-     root->addChild(n);
+    n = new SceneNode();
+    Primitive* p = new PrimitiveSphere(jVec3(0,0,0),0.1);
+    n->sceneObject = new LightSource(p,1.0f);
+    n->sceneObject->isLight = true;
+    n->sceneObject->material = matFact.get(MaterialFactory::WHITE_LIGHT);
+    n->localTransform.translate(-10,10,-5);
+    root->addChild(n);
 
     n = new SceneNode();
     p = new PrimitiveSphere(jVec3(0,0,0),0.1);
