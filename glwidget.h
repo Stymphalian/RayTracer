@@ -45,7 +45,14 @@ public:
         emit updateMaxProgress(val);
     }
 
+public slots:
+    void handle_finished();
+    void handle_started();
+    void handle_terminated();
+    void handle_render_row_finished();
+
 signals:
+    void render_start(QImage& canvas, WorldModel& model, int start_row, int end_row);
     void updateProgress(int val);
     void updateMaxProgress(int val);
 

@@ -100,10 +100,55 @@ void GLWidget::makeImage( )
 
     //make copy of the model and flatten out all the transforms in order to
     // make tracing much much faster.
+    this->_updateMaxProgress(100);
+    this->_updateProgress(0);
+
     WorldModel ray_model(*model);
     ray_model.flatten();
-    rayTracer.render(*img,ray_model,this);
+    // rayTracer.render(*img,ray_model,this,0,height());
+
+    int num_threads =4;
+    QThread* threads[num_threads];
+    RayTracer* tracers[num_threads];
+    int segments = height()/num_threads;
+    for(int i = 0; i < num_threads; ++i){
+        threads[i] = new QThread();
+        tracers[i] = new RayTracer();
+        tracers[i]->moveToThread(threads[i]);
+
+        connect(threads[i],SIGNAL(started()),tracers[i],SLOT(handle_started()));
+        threads[i]->start();
+
+    }
+
+    // wait for all the thread to finish
+    for(int i = 0;i < num_threads; ++i){
+        threads[i]->wait();
+        qDebug() <<" waited for a thread" << i;
+    }
+
+
+    // clean up all the threads + workers
+    for(int i = 0 ;i < num_threads; ++i){
+        delete threads[i];
+        delete tracers[i];
+    }
+
+    this->_updateProgress(100);
 
     *qtimage=img->copy(0, 0,  img->width(), img->height());  // this is for subsequent saving
     prepareImageDisplay(img);
+}
+
+void GLWidget::handle_finished(){
+    qDebug() << "Handle finished\n";
+}
+void GLWidget::handle_started(){
+    qDebug() << "Handle started\n";
+}
+void GLWidget::handle_terminated(){
+    qDebug() << "Handle terminated\n";
+}
+void GLWidget::handle_render_row_finished(){
+    qDebug() << "Render Row Finished\n";
 }

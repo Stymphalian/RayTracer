@@ -1,3 +1,4 @@
+#include <QObject>
 #include <QImage>
 #include <cassert>
 #include "RayTracer.h"
@@ -7,17 +8,17 @@
 #include "Utils/linearalgebra.h"
 #include "../glwidget.h"
 
-RayTracer::RayTracer():epsilon(0.001f){
+RayTracer::RayTracer(): QObject(0),epsilon(0.001f){
+
     min_dist= 0.001f;
     max_dist = 2000.0f;
     max_depth = 3;
     defaultRefractionIndex = 1.0f;
 }
-
 RayTracer::~RayTracer(){}
 
 // void RayTracer::render(QImage& ca,SceneNode& s,std::vector<LightSource*>& l,Camera& cam){
-void RayTracer::render(QImage& ca,WorldModel& model,GLWidget* widget)
+void RayTracer::render(QImage& ca,WorldModel& model,int start_row, int end_row)
 {
     this->scene = model.root;;
     this->lights = &model.lights;
@@ -30,13 +31,8 @@ void RayTracer::render(QImage& ca,WorldModel& model,GLWidget* widget)
     jVec3 pixelColor(0,0,0);
     ray.calcUVW((camera->at - camera->pos),jVec3(0,1,0));
 
-
-    //setup the progress bas
-    widget->_updateMaxProgress(100);
-    widget->_updateProgress(0);
-
 // loop through each pixel
-    for (int row = 0; row < renderHeight; ++row){
+    for (int row = start_row; row < end_row; ++row){
         for(int col = 0; col < renderWidth; ++col){
             ray.calcRay(renderWidth,renderHeight,col,renderHeight - row,camera->pos,camera->focalLength);
             ray.dir.normalize();
@@ -47,11 +43,10 @@ void RayTracer::render(QImage& ca,WorldModel& model,GLWidget* widget)
 
             // update the progress bar
             //widget->_updateProgress((row*renderHeight + col)/(renderHeight*renderWidth));
-            widget->_updateProgress(100*((float)(row*renderHeight + col)/(renderHeight*renderWidth)));
+            //widget->_updateProgress(100*((float)(row*renderHeight + col)/(renderHeight*renderWidth)));
         }
     }
 
-    widget->_updateProgress(100);
 }
 
 jVec3 RayTracer::trace(Ray& ray,float refractionIndex,int depth){
@@ -200,4 +195,13 @@ float RayTracer::getSchlickApproximation(float refractionIndex,float cos_theta){
     power *= power;
     power *= (1-cos_theta);
     return R0 + (1-R0)*power;
+}
+
+
+void RayTracer::handle_started(){
+    for(int i = 0; i <100;++i){
+        qDebug() << thread()->currentThreadId();
+    }
+    emit render_row_finished();
+    thread()->exit();
 }

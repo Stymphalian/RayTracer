@@ -2,7 +2,9 @@
 #define _RAY_TRACER_H_
 
 #include <vector>
+#include <QObject>
 #include <QImage>
+
 
 #include "Ray.h"
 #include "Models/SceneNode.h"
@@ -14,19 +16,24 @@ class Primitive;
 class LightSource;
 class GLWidget;
 
-
-class RayTracer
+class RayTracer : public QObject
 {
+    Q_OBJECT
 public:
-    RayTracer();
+    explicit RayTracer();
     virtual ~RayTracer();
-
-    void render(QImage& canvas,WorldModel& model,GLWidget* widget);
-    // void render(QImage& canvas,SceneNode& scene,std::vector<LightSource*>& lights,Camera& cam);
 
     // actual calls that do the work
     jVec3 trace(Ray& ray, float refractionIndex,int depth);
     jVec3 shade(Ray& ray, HitRecord& hit,float refractionIndex,int depth);
+
+public slots:
+    void render(QImage& canvas,WorldModel& model,int start_row,int end_row);
+    void handle_started();
+    // void render(QImage& canvas,SceneNode& scene,std::vector<LightSource*>& lights,Camera& cam);
+
+signals:
+    void render_row_finished();
 
 protected:
     SceneNode* scene;
