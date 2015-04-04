@@ -190,6 +190,7 @@ void PrimitiveTriMesh::fillTriMeshFromObjFile(ObjFileReader::Obj_Model& model){
     }
 
     // calculate the bounding box
+    boundingbox = _getBoundingBox();
 }
 
 AABB PrimitiveTriMesh::_getBoundingBox()
