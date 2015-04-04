@@ -12,7 +12,10 @@ public:
     jVec3 min,max;
 
     PrimitiveCube(jVec3 min, jVec3 max);
+    PrimitiveCube(const PrimitiveCube& other);
     virtual ~PrimitiveCube();
+
+    virtual void flatten(jMat4& transform);
 protected:
     void orderMinMax(jVec3& min,jVec3& max);
 };

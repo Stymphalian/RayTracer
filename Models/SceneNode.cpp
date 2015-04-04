@@ -9,6 +9,11 @@ SceneNode::SceneNode(){
     children.clear();
     localTransform.toidentity();
 }
+
+SceneNode::SceneNode(const SceneNode& other){
+    //TODO
+}
+
 SceneNode::~SceneNode(){
     delete sceneObject;
     clear();
@@ -87,4 +92,22 @@ void SceneNode::queryScene(Ray& ray, HitRecord& hitRecord, jMat4& transform){
     }
 
     // the result of this function, is the side-effect in the hitRecord
+}
+
+void SceneNode::flatten(jMat4& transform)
+{
+    // jMat4 localTransform;
+    // Primitive* sceneObject;
+    // std::vector<SceneNode*> children;
+    // SceneNode* parent;
+
+    jMat4 candTransform = localTransform*transform;
+    if( sceneObject != NULL){
+        sceneObject->flatten(candTransform);
+    }
+
+    for(int i = 0;i < (int)children.size(); ++i)
+    {
+        children[i]->flatten(candTransform);
+    }
 }

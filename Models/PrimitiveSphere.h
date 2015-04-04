@@ -9,22 +9,22 @@
 // sphere object
 class PrimitiveSphere : public Primitive {
 public:
-  // sphere code
   jVec3 pos;
   double radius;
   jVec3 radius_vector;
 
   PrimitiveSphere(jVec3 pos, double radius);
+  PrimitiveSphere(const PrimitiveSphere& other);
   virtual ~PrimitiveSphere();
 
   virtual void draw(jMat4& transform);
   virtual bool intersects(Ray& ray,HitRecord& rs, jMat4& transform);
   virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit);
-  // virtual jVec3 getNormal(jVec3& v);
+  virtual jVec3 getOrigin();
+  virtual void flatten(jMat4& transform);
+
 protected:
   std::vector<jVec3> vertices;
-  //std::vector<GLfloat> transformed_verts;
-
 };
 
 #endif

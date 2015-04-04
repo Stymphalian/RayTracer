@@ -30,6 +30,11 @@ PrimitiveCube::PrimitiveCube(jVec3 min, jVec3 max): PrimitiveTriMesh(){
 
     has_bounding_box = false;
 }
+PrimitiveCube::PrimitiveCube(const PrimitiveCube& other): PrimitiveTriMesh(other){
+    min = other.min;
+    max = other.max;
+}
+
 PrimitiveCube::~PrimitiveCube(){}
 
 void PrimitiveCube::orderMinMax(jVec3& min,jVec3& max)
@@ -45,4 +50,10 @@ void PrimitiveCube::orderMinMax(jVec3& min,jVec3& max)
         this->min = _max;
         this->max = _min;
     }
+}
+
+void PrimitiveCube::flatten(jMat4& transform) {
+    PrimitiveTriMesh::flatten(transform);
+    min = min*transform;
+    max = max*transform;
 }

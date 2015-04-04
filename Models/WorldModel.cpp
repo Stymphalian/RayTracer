@@ -13,7 +13,6 @@
 WorldModel::WorldModel(){
     // setup the camera
     camera.pos = jVec3(9.85341,21.2548,23.5946);
-    // camera.pos = jVec3(10,0,0);
     camera.at = jVec3(0,0,0);
     camera.dir = (camera.at - camera.pos).normalize();
     camera.focalLength = 1500;
@@ -142,34 +141,33 @@ void WorldModel::setupWorld()
     root->addChild(n);
 }
 
-void WorldModel::_setupLights(std::vector<LightSource*>& lights, SceneNode* node,jMat4& transform)
-{
-    jMat4 candTransform = node->localTransform*transform;
 
+void WorldModel::_setupLights(std::vector<LightSource*>& lights, SceneNode* node)
+{
     if(node->sceneObject != NULL && node->sceneObject->isLight){
         LightSource* light = (LightSource*) node->sceneObject;
-        light->local_transform = node->localTransform;
-        light->parent_transform = transform;
-        light->position = jVec3(0,0,0)*(candTransform);
         lights.push_back(light);
     }
 
     for(int i = 0;i < (int)node->children.size(); ++i){
-        _setupLights(lights,node->children[i],candTransform);
+        _setupLights(lights,node->children[i]);
     }
 }
 
 // travers the scenne graphs and extract out the lights.
 void WorldModel::setupLights()
 {
-    jMat4 mat;
-    mat.toidentity();
     lights.clear();
-    _setupLights(lights,root,mat);
+    _setupLights(lights,root);
+}
 
-    // LightSource* light = new LightSource();
-    // light->position = jVec3(0,0,0);
-    // light->shape = new PrimitiveSphere(jVec3(0,0,0),1);
-    // light->intensity = 1.0f;
-    // lights.push_back(light);
+
+void WorldModel::flatten()
+{
+    // camera
+    // SceneNodes
+    jMat4 transform;
+    transform.toidentity();
+    root->flatten(transform);
+    // lights
 }

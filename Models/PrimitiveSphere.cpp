@@ -38,6 +38,13 @@ PrimitiveSphere::PrimitiveSphere(jVec3 pos, double radius) : Primitive()
 
 }
 
+PrimitiveSphere::PrimitiveSphere(const PrimitiveSphere& other) : Primitive(other){
+    pos = other.pos;
+    radius = other.radius;
+    radius_vector = other.radius_vector;
+    vertices = other.vertices;
+}
+
 PrimitiveSphere::~PrimitiveSphere(){}
 
 void PrimitiveSphere::draw(jMat4& transform){
@@ -113,4 +120,20 @@ jVec3 PrimitiveSphere::getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit)
     jVec3 transformed_radius = this->radius_vector*transform;
     float radius = (transformed_radius - trans_pos).length();
     return (hitPoint - trans_pos)/radius;
+}
+
+jVec3 PrimitiveSphere::getOrigin(){
+    return pos;
+}
+void  PrimitiveSphere::flatten(jMat4& transform){
+    isFlat = true;
+
+    pos = pos*transform;
+    radius_vector = radius_vector*transform;
+    radius = (radius_vector - pos).length();
+
+    for(int i = 0;i < (int)vertices.size(); ++i)
+    {
+        vertices[i] = vertices[i]*transform;
+    }
 }

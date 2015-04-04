@@ -21,11 +21,15 @@ public:
     bool has_bounding_box;
 
     PrimitiveTriMesh();
+    PrimitiveTriMesh(const PrimitiveTriMesh& other);
     virtual ~PrimitiveTriMesh();
 
     virtual void draw(jMat4& transform);
     virtual bool intersects(Ray& ray,HitRecord& rs, jMat4& transform);
     virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit);
+    virtual jVec3 getOrigin();
+    virtual void flatten(jMat4& transform);
+
 
     virtual bool hasBoundingBox();
     virtual bool intersectsBoundingBox(Ray& ray);
@@ -34,7 +38,7 @@ public:
 protected:
     bool  _intersects(Ray& ray,HitRecord& rs, jMat4& transform,int index);
     jVec3 _getNormal(jMat4& transform,int hitIndex);
-
+    AABB _getBoundingBox();
 };
 
 #endif

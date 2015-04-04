@@ -13,8 +13,7 @@ PrimitivePlane::PrimitivePlane(jVec3 p1,jVec3 p2,jVec3 p3, jVec3 p4): PrimitiveT
     vertex_indices.push_back(jVec3(1,2,3));
     has_bounding_box = false;
 }
-PrimitivePlane::~PrimitivePlane(){}
+PrimitivePlane::PrimitivePlane(const PrimitivePlane& other): PrimitiveTriMesh(other){
 
-// void  PrimitivePlane::draw(jMat4& transform){}
-// bool  PrimitivePlane::intersects(Ray& ray,HitRecord& rs, jMat4& transform){}
-// jVec3 PrimitivePlane::getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit){}
+}
+PrimitivePlane::~PrimitivePlane(){}

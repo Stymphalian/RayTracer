@@ -10,7 +10,14 @@
 // --------------
 Primitive::Primitive(){
     isLight = false;
+    isFlat = false;
 }
+Primitive::Primitive(const Primitive& other){
+    material = other.material;
+    isLight = other.isLight;
+    isFlat = other.isFlat;
+}
+
 Primitive::~Primitive(){}
 
 bool Primitive::hasBoundingBox(){

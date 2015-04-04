@@ -12,6 +12,16 @@ PrimitiveTriMesh::PrimitiveTriMesh():Primitive(){
     has_bounding_box = true;
 }
 
+PrimitiveTriMesh::PrimitiveTriMesh(const PrimitiveTriMesh& other) : Primitive(other){
+    vertex_pool = other.vertex_pool;
+    texture_pool = other.texture_pool;
+    normal_pool = other.normal_pool;
+    vertex_indices = other.vertex_indices;
+    texture_indices = other.texture_indices;
+    normal_indices = other.normal_indices;
+    has_bounding_box = has_bounding_box;
+}
+
 PrimitiveTriMesh::~PrimitiveTriMesh(){
     vertex_pool.clear();
     texture_pool.clear();
@@ -165,6 +175,11 @@ void PrimitiveTriMesh::fillTriMeshFromObjFile(ObjFileReader::Obj_Model& model){
     }
 
     // calculate the bounding box
+}
+
+AABB PrimitiveTriMesh::_getBoundingBox()
+{
+    AABB b;
     float min_x = this->vertex_pool[0][0];
     float min_y = this->vertex_pool[0][1];
     float min_z = this->vertex_pool[0][2];
@@ -172,7 +187,7 @@ void PrimitiveTriMesh::fillTriMeshFromObjFile(ObjFileReader::Obj_Model& model){
     float max_y = this->vertex_pool[0][1];
     float max_z = this->vertex_pool[0][2];
 
-    for(int i = 0; i< this->vertex_pool.size(); ++i){
+    for(int i = 0; i< (int)this->vertex_pool.size(); ++i){
         if( this->vertex_pool[i][0] < min_x){
             min_x = this->vertex_pool[i][0];
         }
@@ -194,6 +209,43 @@ void PrimitiveTriMesh::fillTriMeshFromObjFile(ObjFileReader::Obj_Model& model){
         }
     }
 
-    boundingbox.lb = jVec3(min_x,min_y,max_z);
-    boundingbox.rt = jVec3(max_x,max_y,min_z);
+    b.lb = jVec3(min_x,min_y,max_z);
+    b.rt = jVec3(max_x,max_y,min_z);
+    return b;
+}
+
+jVec3 PrimitiveTriMesh::getOrigin(){
+    float x = 0;
+    float y = 0;
+    float z = 0;
+
+    int size = vertex_pool.size();
+    for(int i = 0;i < size; ++i){
+        x += vertex_pool[i][0];
+        y += vertex_pool[i][1];
+        z += vertex_pool[i][2];
+    }
+
+    // return the mean between all the points.
+    return jVec3(x/size, y/size, z/size);
+}
+
+void  PrimitiveTriMesh::flatten(jMat4& transform){
+    isFlat = true;
+
+    int size = vertex_pool.size();
+    for(int i = 0;i < size; ++i)
+    {
+        vertex_pool[i] = vertex_pool[i]*transform;
+    }
+
+    jMat4 inv_trans = transform.inverse().transpose();
+    size = normal_pool.size();
+    for(int i = 0;i < size; ++i)
+    {
+        normal_pool[i] = normal_pool[i]*inv_trans;
+    }
+
+    boundingbox.lb = boundingbox.lb*transform;
+    boundingbox.rt = boundingbox.rt*transform;
 }

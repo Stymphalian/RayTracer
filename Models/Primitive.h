@@ -16,13 +16,18 @@ class Primitive {
 public:
   Material material;
   bool isLight;
+  bool isFlat; // variable used to detemine if the transform should be applied.
 
   Primitive();
+  Primitive(const Primitive& other);
   virtual ~Primitive();
 
+  // pure virtual methods
   virtual void  draw(jMat4& transform) = 0;
   virtual bool  intersects(Ray& ray,HitRecord& rs, jMat4& transform) = 0;
   virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit) = 0;
+  virtual jVec3 getOrigin() = 0;
+  virtual void flatten(jMat4& transform) = 0;
 
   virtual bool hasBoundingBox();
   virtual bool intersectsBoundingBox(Ray& ray);

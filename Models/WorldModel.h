@@ -16,10 +16,12 @@ public:
     SceneNode* root;
     std::vector<LightSource*> lights;
 
+    void flatten();
+
 protected:
     void setupWorld();
     void setupLights();
-    void _setupLights(std::vector<LightSource*>& lights, SceneNode* node, jMat4& transform);
+    void _setupLights(std::vector<LightSource*>& lights, SceneNode* node);
 };
 
 #endif

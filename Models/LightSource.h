@@ -5,17 +5,12 @@
 
 class LightSource : public Primitive {
 public:
-    // These must be set by the world model manager
-    jMat4 local_transform;
-    jMat4 parent_transform;
-    jVec3 position;
-
-
     Primitive* wrapped;
     float intensity;
 
     // methods
     LightSource(Primitive* wrappee,float intensity);
+    LightSource(const LightSource& other);
     virtual ~LightSource();
 
     // LightSource methods
@@ -26,6 +21,8 @@ public:
     virtual void draw(jMat4& transform);
     virtual bool intersects(Ray& ray,HitRecord& rs, jMat4& transform);
     virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit);
+    virtual jVec3 getOrigin();
+    virtual void flatten(jMat4& transform);
 };
 
 #endif
