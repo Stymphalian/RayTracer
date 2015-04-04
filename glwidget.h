@@ -37,14 +37,6 @@ public:
     void saveImage(QString fileBuf);
     void makeImage();
 
-
-    void _updateProgress(int val){
-        emit updateProgress(val);
-    }
-    void _updateMaxProgress(int val){
-        emit updateMaxProgress(val);
-    }
-
 public slots:
     void handle_finished();
     void handle_started();
@@ -52,9 +44,9 @@ public slots:
     void handle_render_row_finished();
 
 signals:
-    void render_start(QImage& canvas, WorldModel& model, int start_row, int end_row);
     void updateProgress(int val);
     void updateMaxProgress(int val);
+    void render(int id,QImage* canvas,WorldModel* model,int start_row,int end_row);
 
 protected:
     //Initialize the OpenGL Graphics Engine
@@ -81,7 +73,17 @@ private:
     // keep the qtimage around for saving (one is a copy of the other
 
     WorldModel* model;
-    RayTracer rayTracer;
+    WorldModel* ray_model;
+
+    int max_num_threads;
+    QImage* processing_image;
+
+    int progress_count;
+    int num_running_threads;
+    bool locked;
+    std::vector<QThread*> threads;
+    std::vector<RayTracer*> tracers;
+
 };
 
 

@@ -9,21 +9,27 @@
 #include "../glwidget.h"
 
 RayTracer::RayTracer(): QObject(0),epsilon(0.001f){
-
     min_dist= 0.001f;
     max_dist = 2000.0f;
     max_depth = 3;
     defaultRefractionIndex = 1.0f;
 }
-RayTracer::~RayTracer(){}
+RayTracer::~RayTracer(){
+    qDebug() << "destroying ray tracer " << thread()->currentThreadId();
+}
 
 // void RayTracer::render(QImage& ca,SceneNode& s,std::vector<LightSource*>& l,Camera& cam){
-void RayTracer::render(QImage& ca,WorldModel& model,int start_row, int end_row)
+void RayTracer::render(int id,QImage* ca,WorldModel* model,int start_row,int end_row)
 {
-    this->scene = model.root;;
-    this->lights = &model.lights;
-    this->camera = &model.camera;
-    this->canvas = &ca;
+    if(this->id != id){return;}
+
+    this->scene = model->root;;
+    this->lights = &model->lights;
+    this->camera = &model->camera;
+    this->canvas = ca;
+
+    this->start_row = start_row;
+    this->end_row = end_row;
 
     Ray ray;
     int renderWidth = canvas->width();
@@ -32,7 +38,7 @@ void RayTracer::render(QImage& ca,WorldModel& model,int start_row, int end_row)
     ray.calcUVW((camera->at - camera->pos),jVec3(0,1,0));
 
 // loop through each pixel
-    for (int row = start_row; row < end_row; ++row){
+    for (int row = start_row; row <= end_row; ++row){
         for(int col = 0; col < renderWidth; ++col){
             ray.calcRay(renderWidth,renderHeight,col,renderHeight - row,camera->pos,camera->focalLength);
             ray.dir.normalize();
@@ -45,8 +51,13 @@ void RayTracer::render(QImage& ca,WorldModel& model,int start_row, int end_row)
             //widget->_updateProgress((row*renderHeight + col)/(renderHeight*renderWidth));
             //widget->_updateProgress(100*((float)(row*renderHeight + col)/(renderHeight*renderWidth)));
         }
+
+        // update the progress bar
+        emit render_row_finished();
     }
 
+    emit finished();
+    // thread()->exit();
 }
 
 jVec3 RayTracer::trace(Ray& ray,float refractionIndex,int depth){
@@ -197,11 +208,3 @@ float RayTracer::getSchlickApproximation(float refractionIndex,float cos_theta){
     return R0 + (1-R0)*power;
 }
 
-
-void RayTracer::handle_started(){
-    for(int i = 0; i <100;++i){
-        qDebug() << thread()->currentThreadId();
-    }
-    emit render_row_finished();
-    thread()->exit();
-}

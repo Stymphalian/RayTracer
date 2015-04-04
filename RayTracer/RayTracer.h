@@ -23,23 +23,26 @@ public:
     explicit RayTracer();
     virtual ~RayTracer();
 
+    int id;
     // actual calls that do the work
     jVec3 trace(Ray& ray, float refractionIndex,int depth);
     jVec3 shade(Ray& ray, HitRecord& hit,float refractionIndex,int depth);
 
 public slots:
-    void render(QImage& canvas,WorldModel& model,int start_row,int end_row);
-    void handle_started();
-    // void render(QImage& canvas,SceneNode& scene,std::vector<LightSource*>& lights,Camera& cam);
+    void render(int id,QImage* canvas,WorldModel* model,int start_row,int end_row);
 
 signals:
     void render_row_finished();
+    void finished();
 
 protected:
     SceneNode* scene;
     std::vector<LightSource*>* lights;
     QImage* canvas;
     Camera* camera;
+    int start_row;
+    int end_row;
+
 
     int max_depth;
     float defaultRefractionIndex;

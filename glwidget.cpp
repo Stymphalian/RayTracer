@@ -18,6 +18,13 @@ GLWidget::GLWidget(QWidget *parent)
     imageReady=false;
     qtimage=NULL;
     glimage=NULL;
+
+    model = NULL;
+    progress_count = 0;
+    max_num_threads = 4;
+    num_running_threads =0;
+    locked = false;
+    processing_image = NULL;
 }
 
 GLWidget::~GLWidget()
@@ -94,61 +101,105 @@ void GLWidget::saveImage( QString fileBuf )
     qtimage->save ( fileBuf );   // note it is the qtimage in the right format for saving
 }
 
+
+// Everything below here has to do with signal + slot in order to
+// get threads working....
 void GLWidget::makeImage( )
 {
-    QImage* img = new QImage(width(), height(), QImage::Format_RGB32);
+    if(locked == true){return;}
+
+    processing_image = new QImage(width(), height(), QImage::Format_RGB32);
+    progress_count = 0;
+    num_running_threads = 0;
+    locked = true;
+    threads.resize(max_num_threads);
+    tracers.resize(max_num_threads);
+
+    // init the progress bar
+    emit updateMaxProgress(height());
+    emit updateProgress(progress_count);
 
     //make copy of the model and flatten out all the transforms in order to
-    // make tracing much much faster.
-    this->_updateMaxProgress(100);
-    this->_updateProgress(0);
+    ray_model = new WorldModel(*model);
+    ray_model->flatten();
 
-    WorldModel ray_model(*model);
-    ray_model.flatten();
-    // rayTracer.render(*img,ray_model,this,0,height());
-
-    int num_threads =4;
-    QThread* threads[num_threads];
-    RayTracer* tracers[num_threads];
-    int segments = height()/num_threads;
-    for(int i = 0; i < num_threads; ++i){
+    int segments = height()/max_num_threads;
+    for(int i = 0; i < max_num_threads; ++i){
         threads[i] = new QThread();
         tracers[i] = new RayTracer();
+        tracers[i]->id = i;
         tracers[i]->moveToThread(threads[i]);
 
-        connect(threads[i],SIGNAL(started()),tracers[i],SLOT(handle_started()));
+        // threads -> tracers
+        // when the thread starts, begin the rendering..
+        // connect(threads[i],SIGNAL(started()),tracers[i],SLOT(jordan()));
+        connect(this,SIGNAL(render(int,QImage*,WorldModel*,int,int)),tracers[i],SLOT(render(int,QImage*,WorldModel*,int,int)));
+
+        // tracers -> this
+        // when the tracer signals a finished row, update the progresss bar
+        connect(tracers[i],SIGNAL(render_row_finished()),this,SLOT(handle_render_row_finished()));
+
+        // clean up the tracers when they are finished rendering..
+        // this also informs the thread to quit.
+        connect(tracers[i],SIGNAL(finished()),threads[i],SLOT(quit()));
+        connect(tracers[i],SIGNAL(finished()),tracers[i],SLOT(deleteLater()));
+        connect(threads[i],SIGNAL(finished()),threads[i],SLOT(deleteLater()));
+
+        // thread -> this
+        // keep track of when all the threads are complete so that we can
+        // safetly delete them and unlock the rendering workflow.
+        connect(threads[i],SIGNAL(started()),this,SLOT(handle_started()));
+        connect(threads[i],SIGNAL(finished()),this,SLOT(handle_finished()));
+        //connect(threads[i],SIGNAL(terminated()),this,SLOT(handle_terminated()));
+    }
+
+    // begin the threads all at once.
+    for(int i = 0 ; i< max_num_threads; ++i){
         threads[i]->start();
-
+        if( i == max_num_threads - 1){
+            emit render(i,processing_image,ray_model,i*segments,height()-1);
+        }else{
+            emit render(i,processing_image,ray_model,i*segments,(i+1)*segments - 1);
+        }
     }
-
-    // wait for all the thread to finish
-    for(int i = 0;i < num_threads; ++i){
-        threads[i]->wait();
-        qDebug() <<" waited for a thread" << i;
-    }
+}
 
 
-    // clean up all the threads + workers
-    for(int i = 0 ;i < num_threads; ++i){
-        delete threads[i];
-        delete tracers[i];
-    }
-
-    this->_updateProgress(100);
-
-    *qtimage=img->copy(0, 0,  img->width(), img->height());  // this is for subsequent saving
-    prepareImageDisplay(img);
+void GLWidget::handle_started(){
+    num_running_threads += 1;
+    qDebug() << "Handle started " << num_running_threads;
 }
 
 void GLWidget::handle_finished(){
-    qDebug() << "Handle finished\n";
+    num_running_threads -= 1;
+    qDebug() << "Handle finished "<< num_running_threads;
+
+    if( num_running_threads == 0){
+        // clean up all the threads + workers
+        for(int i = 0 ;i < max_num_threads; ++i){
+            threads[i] = NULL;
+            tracers[i] = NULL;
+        }
+        delete ray_model;
+        ray_model = NULL;
+
+        // final update to the progress bar
+        emit updateProgress(height());
+
+        *qtimage=processing_image->copy(0, 0,processing_image->width(),processing_image->height());  // this is for subsequent saving
+        prepareImageDisplay(processing_image);
+
+        // unlock the workflow
+        locked = false;
+    }
 }
-void GLWidget::handle_started(){
-    qDebug() << "Handle started\n";
-}
+
 void GLWidget::handle_terminated(){
-    qDebug() << "Handle terminated\n";
+    qDebug() << "Handle terminated";
 }
+
 void GLWidget::handle_render_row_finished(){
-    qDebug() << "Render Row Finished\n";
+    progress_count += 1;
+    emit updateProgress(progress_count);
+    qDebug() << "Render Row Finished "<< progress_count;
 }
