@@ -9,8 +9,9 @@ PrimitivePlane::PrimitivePlane(jVec3 p1,jVec3 p2,jVec3 p3, jVec3 p4): PrimitiveT
     vertex_pool.push_back(p3);
     vertex_pool.push_back(p4);
 
-    indices.push_back(jVec3(0,1,3));
-    indices.push_back(jVec3(1,2,3));
+    vertex_indices.push_back(jVec3(0,1,3));
+    vertex_indices.push_back(jVec3(1,2,3));
+    has_bounding_box = false;
 }
 PrimitivePlane::~PrimitivePlane(){}
 

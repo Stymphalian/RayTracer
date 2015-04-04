@@ -6,28 +6,42 @@
 #include "../Utils/linearalgebra.h"
 #include "../RayTracer/HitRecord.h"
 #include "../RayTracer/Ray.h"
+#include "AABB.h"
 
+PrimitiveTriMesh::PrimitiveTriMesh():Primitive(){
+    has_bounding_box = true;
+}
 
-PrimitiveTriMesh::PrimitiveTriMesh():Primitive(){}
 PrimitiveTriMesh::~PrimitiveTriMesh(){
     vertex_pool.clear();
-    indices.clear();
+    texture_pool.clear();
+    normal_pool.clear();
+    vertex_indices.clear();
+    texture_indices.clear();
+    normal_indices.clear();
+}
+
+bool PrimitiveTriMesh::hasBoundingBox(){
+    return has_bounding_box;
+}
+bool PrimitiveTriMesh::intersectsBoundingBox(Ray& ray){
+    return boundingbox.intersects(ray);
 }
 
 void  PrimitiveTriMesh::draw(jMat4& transform){
     glColor3f(material.color[0],material.color[1],material.color[2]);
 
     jVec3 v;
-    int size = indices.size();
+    int size = vertex_indices.size();
     glBegin(GL_TRIANGLES);
     for(int i = 0 ;i < size; ++i){
-        v = vertex_pool[indices[i][0]]*transform;
+        v = vertex_pool[vertex_indices[i][0]]*transform;
         glVertex3f(v[0],v[1],v[2]);
 
-        v = vertex_pool[indices[i][1]]*transform;
+        v = vertex_pool[vertex_indices[i][1]]*transform;
         glVertex3f(v[0],v[1],v[2]);
 
-        v = vertex_pool[indices[i][2]]*transform;
+        v = vertex_pool[vertex_indices[i][2]]*transform;
         glVertex3f(v[0],v[1],v[2]);
     }
     glEnd();
@@ -38,9 +52,9 @@ void  PrimitiveTriMesh::draw(jMat4& transform){
 // justin guze - https://github.com/jguze/csc305_graphics
 bool PrimitiveTriMesh::_intersects(Ray& ray,HitRecord& hit,jMat4& transform, int index)
 {
-    jVec3 vec_a = (vertex_pool[indices[index][0]]*transform);
-    jVec3 vec_b = (vertex_pool[indices[index][1]]*transform);
-    jVec3 vec_c = (vertex_pool[indices[index][2]]*transform);
+    jVec3 vec_a = (vertex_pool[vertex_indices[index][0]]*transform);
+    jVec3 vec_b = (vertex_pool[vertex_indices[index][1]]*transform);
+    jVec3 vec_c = (vertex_pool[vertex_indices[index][2]]*transform);
 
     double t, gamma, beta;
     double a = vec_a[0] - vec_b[0];
@@ -93,8 +107,14 @@ bool PrimitiveTriMesh::_intersects(Ray& ray,HitRecord& hit,jMat4& transform, int
 
 bool  PrimitiveTriMesh::intersects(Ray& ray,HitRecord& rs, jMat4& transform){
     // check bounding volume.
+    if(hasBoundingBox()){
+        if( intersectsBoundingBox(ray) == false){
+            rs.hit = false;
+            return false;
+        }
+    }
 
-    int size = indices.size();
+    int size = vertex_indices.size();
     for(int i = 0;i < size; ++i)
     {
         _intersects(ray,rs,transform,i);
@@ -104,9 +124,9 @@ bool  PrimitiveTriMesh::intersects(Ray& ray,HitRecord& rs, jMat4& transform){
 
 // retrieve the normal for a particular index
 jVec3 PrimitiveTriMesh::_getNormal(jMat4& transform,int hitIndex){
-    jVec3 p1_trans = vertex_pool[indices[hitIndex][0]]*transform;
-    jVec3 a = (vertex_pool[indices[hitIndex][1]]*transform) - p1_trans;
-    jVec3 b = (vertex_pool[indices[hitIndex][2]]*transform) - p1_trans;
+    jVec3 p1_trans = vertex_pool[vertex_indices[hitIndex][0]]*transform;
+    jVec3 a = (vertex_pool[vertex_indices[hitIndex][1]]*transform) - p1_trans;
+    jVec3 b = (vertex_pool[vertex_indices[hitIndex][2]]*transform) - p1_trans;
     return (a^b).normalize();
 }
 
@@ -115,4 +135,65 @@ jVec3 PrimitiveTriMesh::getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit
         return jVec3(0,0,0);
     }
     return _getNormal(transform,hit.hitIndex);
+}
+
+
+void PrimitiveTriMesh::fillTriMeshFromObjFile(ObjFileReader::Obj_Model& model){
+    this->vertex_pool = model.vertices;
+    this->texture_pool= model.textures;
+    this->normal_pool = model.normals;
+    this->vertex_indices = model.vertex_indices;
+    this->texture_indices = model.texture_indices;
+    this->normal_indices = model.normal_indices;
+
+    for(int i = 0;i < (int)this->vertex_indices.size(); ++i){
+        this->vertex_indices[i][0]= this->vertex_indices[i][0] -1;
+        this->vertex_indices[i][1]= this->vertex_indices[i][1] -1;
+        this->vertex_indices[i][2]= this->vertex_indices[i][2] -1;
+    }
+
+    for(int i = 0;i < (int)this->texture_indices.size(); ++i){
+        this->texture_indices[i][0]= this->texture_indices[i][0] -1;
+        this->texture_indices[i][1]= this->texture_indices[i][1] -1;
+        this->texture_indices[i][2]= this->texture_indices[i][2] -1;
+    }
+
+    for(int i = 0;i < (int)this->normal_indices.size(); ++i){
+        this->normal_indices[i][0]= this->normal_indices[i][0] -1;
+        this->normal_indices[i][1]= this->normal_indices[i][1] -1;
+        this->normal_indices[i][2]= this->normal_indices[i][2] -1;
+    }
+
+    // calculate the bounding box
+    float min_x = this->vertex_pool[0][0];
+    float min_y = this->vertex_pool[0][1];
+    float min_z = this->vertex_pool[0][2];
+    float max_x = this->vertex_pool[0][0];
+    float max_y = this->vertex_pool[0][1];
+    float max_z = this->vertex_pool[0][2];
+
+    for(int i = 0; i< this->vertex_pool.size(); ++i){
+        if( this->vertex_pool[i][0] < min_x){
+            min_x = this->vertex_pool[i][0];
+        }
+        if( this->vertex_pool[i][1] < min_y){
+            min_y = this->vertex_pool[i][1];
+        }
+        if( this->vertex_pool[i][2] < min_y){
+            min_z = this->vertex_pool[i][2];
+        }
+
+        if( this->vertex_pool[i][0] > max_x){
+            max_x = this->vertex_pool[i][0];
+        }
+        if( this->vertex_pool[i][1] > max_y){
+            max_y = this->vertex_pool[i][1];
+        }
+        if( this->vertex_pool[i][2] > max_y){
+            max_z = this->vertex_pool[i][2];
+        }
+    }
+
+    boundingbox.lb = jVec3(min_x,min_y,max_z);
+    boundingbox.rt = jVec3(max_x,max_y,min_z);
 }

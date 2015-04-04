@@ -39,10 +39,12 @@ PrimitiveTriMesh* createMesh(){
     mesh->vertex_pool.push_back(jVec3(-1,0,-1));
     mesh->vertex_pool.push_back(jVec3(-1,0,0));
     mesh->vertex_pool.push_back(jVec3(-1,0,1));
-    mesh->indices.push_back(jVec3(0,1,2));
-    mesh->indices.push_back(jVec3(2,3,4));
-    mesh->indices.push_back(jVec3(4,5,6));
-    mesh->indices.push_back(jVec3(6,7,0));
+    mesh->vertex_indices.push_back(jVec3(0,1,2));
+    mesh->vertex_indices.push_back(jVec3(2,3,4));
+    mesh->vertex_indices.push_back(jVec3(4,5,6));
+    mesh->vertex_indices.push_back(jVec3(6,7,0));
+
+    mesh->has_bounding_box = false;
     return mesh;
 }
 
@@ -110,20 +112,15 @@ void WorldModel::setupWorld()
 
     ObjFileReader reader;
     ObjFileReader::Obj_Model obj_model;
-    reader.read("icosahedron.obj",&obj_model);
+    // reader.read("icosahedron.obj",&obj_model);
+    reader.read("lamp.obj",&obj_model);
     n = new SceneNode();
     PrimitiveTriMesh* mesh = new PrimitiveTriMesh();
-    mesh->vertex_pool = obj_model.vertices;
-    mesh->indices = obj_model.vertex_indices;
-    for( int i = 0;i < mesh->indices.size(); ++i){
-        mesh->indices[i][0] = mesh->indices[i][0] - 1;
-        mesh->indices[i][1] = mesh->indices[i][1] - 1;
-        mesh->indices[i][2] = mesh->indices[i][2] - 1;
-    }
+    mesh->fillTriMeshFromObjFile(obj_model);
     n->sceneObject = mesh;
     n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
     n->localTransform.scale(2,2,2);
-    n->localTransform.translate(5,2,0);
+    n->localTransform.translate(5,5,0);
     root->addChild(n);
 
     // // Creating a light

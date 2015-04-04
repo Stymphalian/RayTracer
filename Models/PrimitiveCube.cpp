@@ -15,18 +15,20 @@ PrimitiveCube::PrimitiveCube(jVec3 min, jVec3 max): PrimitiveTriMesh(){
     vertex_pool.push_back(jVec3(max[0],max[1],max[2]) );
     vertex_pool.push_back(jVec3(max[0],min[1],max[2]) );
 
-    indices.push_back(jVec3(0,3,2));
-    indices.push_back(jVec3(2,1,0));
-    indices.push_back(jVec3(2,3,7));
-    indices.push_back(jVec3(7,6,2));
-    indices.push_back(jVec3(0,4,7));
-    indices.push_back(jVec3(7,3,0));
-    indices.push_back(jVec3(1,2,6));
-    indices.push_back(jVec3(6,5,1));
-    indices.push_back(jVec3(4,5,6));
-    indices.push_back(jVec3(6,7,4));
-    indices.push_back(jVec3(0,1,5));
-    indices.push_back(jVec3(5,4,0));
+    vertex_indices.push_back(jVec3(0,3,2));
+    vertex_indices.push_back(jVec3(2,1,0));
+    vertex_indices.push_back(jVec3(2,3,7));
+    vertex_indices.push_back(jVec3(7,6,2));
+    vertex_indices.push_back(jVec3(0,4,7));
+    vertex_indices.push_back(jVec3(7,3,0));
+    vertex_indices.push_back(jVec3(1,2,6));
+    vertex_indices.push_back(jVec3(6,5,1));
+    vertex_indices.push_back(jVec3(4,5,6));
+    vertex_indices.push_back(jVec3(6,7,4));
+    vertex_indices.push_back(jVec3(0,1,5));
+    vertex_indices.push_back(jVec3(5,4,0));
+
+    has_bounding_box = false;
 }
 PrimitiveCube::~PrimitiveCube(){}
 

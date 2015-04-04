@@ -5,12 +5,20 @@
 #include "Primitive.h"
 #include "../Utils/linearalgebra.h"
 #include "../RayTracer/HitRecord.h"
+#include "../Utils/ObjFileReader.h"
+#include "AABB.h"
 
 class PrimitiveTriMesh : public Primitive
 {
 public:
     std::vector<jVec3> vertex_pool;
-    std::vector<jVec3> indices;
+    std::vector<jVec3> texture_pool;
+    std::vector<jVec3> normal_pool;
+    std::vector<jVec3> vertex_indices;
+    std::vector<jVec3> texture_indices;
+    std::vector<jVec3> normal_indices;
+    AABB boundingbox;
+    bool has_bounding_box;
 
     PrimitiveTriMesh();
     virtual ~PrimitiveTriMesh();
@@ -19,9 +27,14 @@ public:
     virtual bool intersects(Ray& ray,HitRecord& rs, jMat4& transform);
     virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit);
 
+    virtual bool hasBoundingBox();
+    virtual bool intersectsBoundingBox(Ray& ray);
+
+    void fillTriMeshFromObjFile(ObjFileReader::Obj_Model& model);
 protected:
     bool  _intersects(Ray& ray,HitRecord& rs, jMat4& transform,int index);
     jVec3 _getNormal(jMat4& transform,int hitIndex);
+
 };
 
 #endif
