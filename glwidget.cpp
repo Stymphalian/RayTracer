@@ -6,6 +6,8 @@
 // added progress bar to show memory usage.
 //-------------------------------------------------------------------------------------------
 
+#include <QElapsedTimer>
+#include <QDebug>
 #include "glwidget.h"
 #include "Models/Primitive.h"
 #include "Models/PrimitiveSphere.h"
@@ -95,7 +97,12 @@ void GLWidget::saveImage( QString fileBuf )
 void GLWidget::makeImage( )
 {
     QImage* img = new QImage(width(), height(), QImage::Format_RGB32);
-    rayTracer.render(*img,*model,this);
+
+    //make copy of the model and flatten out all the transforms in order to
+    // make tracing much much faster.
+    WorldModel ray_model(*model);
+    ray_model.flatten();
+    rayTracer.render(*img,ray_model,this);
 
     *qtimage=img->copy(0, 0,  img->width(), img->height());  // this is for subsequent saving
     prepareImageDisplay(img);

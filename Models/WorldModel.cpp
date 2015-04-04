@@ -22,6 +22,13 @@ WorldModel::WorldModel(){
     setupLights();
 }
 
+WorldModel::WorldModel(const WorldModel& other) :
+    camera(other.camera)
+{
+    root = new SceneNode(*other.root);
+    setupLights();
+}
+
 WorldModel::~WorldModel(){
     delete root;
     lights.clear();
@@ -109,18 +116,18 @@ void WorldModel::setupWorld()
     n->localTransform.translate(0,-2,0);
     root->addChild(n);
 
-    ObjFileReader reader;
-    ObjFileReader::Obj_Model obj_model;
-    // reader.read("icosahedron.obj",&obj_model);
-    reader.read("lamp.obj",&obj_model);
-    n = new SceneNode();
-    PrimitiveTriMesh* mesh = new PrimitiveTriMesh();
-    mesh->fillTriMeshFromObjFile(obj_model);
-    n->sceneObject = mesh;
-    n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
-    n->localTransform.scale(2,2,2);
-    n->localTransform.translate(5,5,0);
-    root->addChild(n);
+    // ObjFileReader reader;
+    // ObjFileReader::Obj_Model obj_model;
+    // // reader.read("icosahedron.obj",&obj_model);
+    // reader.read("lamp.obj",&obj_model);
+    // n = new SceneNode();
+    // PrimitiveTriMesh* mesh = new PrimitiveTriMesh();
+    // mesh->fillTriMeshFromObjFile(obj_model);
+    // n->sceneObject = mesh;
+    // n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
+    // n->localTransform.scale(2,2,2);
+    // n->localTransform.translate(5,5,0);
+    // root->addChild(n);
 
     // // Creating a light
     n = new SceneNode();

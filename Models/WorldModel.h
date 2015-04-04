@@ -9,6 +9,7 @@
 class WorldModel{
 public:
     WorldModel();
+    WorldModel(const WorldModel& other);
     virtual ~WorldModel();
 
     // variables

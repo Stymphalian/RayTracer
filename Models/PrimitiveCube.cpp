@@ -57,3 +57,7 @@ void PrimitiveCube::flatten(jMat4& transform) {
     min = min*transform;
     max = max*transform;
 }
+
+PrimitiveCube* PrimitiveCube::clone() const{
+    return new PrimitiveCube(*this);
+}

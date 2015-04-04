@@ -16,6 +16,7 @@ public:
     virtual ~PrimitiveCube();
 
     virtual void flatten(jMat4& transform);
+    virtual PrimitiveCube* clone() const;
 protected:
     void orderMinMax(jVec3& min,jVec3& max);
 };

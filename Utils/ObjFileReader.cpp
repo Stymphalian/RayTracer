@@ -11,7 +11,7 @@ std::vector<std::string> split(const std::string& line, const char* delims, int 
 {
     std::vector<std::string> tokens;
     std::string last_token = "";
-    for(int i = 0;i < line.size(); ++i)
+    for(int i = 0;i < (int)line.size(); ++i)
     {
         char c = line[i];
 
@@ -66,7 +66,7 @@ void ObjFileReader::parse_face(std::vector<std::string>& tokens,Obj_Model& model
     // start from 1 in order to ignore the 'f' token
     bool first_index = true;
     int index = 0;
-    for(int i = 1; i < tokens.size(); ++i)
+    for(int i = 1; i < (int)tokens.size(); ++i)
     {
         parsed_number = split(tokens[i],delims,delims_len,true);
 
@@ -197,7 +197,7 @@ void ObjFileReader::test()
     std::string test_split_string = "Hello Jordan  is here to help";
     std::vector<std::string> split_rs = split(test_split_string,delims_split,2,true);
     const std::string desired_split[]= {"Hello","Jordan","","is","here","to","help"};
-    for(int i = 0; i < split_rs.size(); ++i){
+    for(int i = 0; i < (int)split_rs.size(); ++i){
         if( split_rs[i] != desired_split[i]){
             std::cout << "Bad Input" << std::endl;
         }
@@ -207,22 +207,22 @@ void ObjFileReader::test()
     std::cout << "Testing obj read" << std::endl;
     ObjFileReader::Obj_Model model;
     read("icosahedron.obj",&model);
-    for(int i = 0; i < model.vertices.size(); ++i){
+    for(int i = 0; i < (int)model.vertices.size(); ++i){
         std::cout << "v " << model.vertices[i][0] << " " << model.vertices[i][1] << " " << model.vertices[i][2] << std::endl;
     }
-    for(int i = 0; i < model.textures.size(); ++i){
+    for(int i = 0; i < (int)model.textures.size(); ++i){
         std::cout << "vt " << model.textures[i][0] << " " << model.textures[i][1] << " " << model.textures[i][2] << std::endl;
     }
-    for(int i = 0; i < model.normals.size(); ++i){
+    for(int i = 0; i < (int)model.normals.size(); ++i){
         std::cout << "vn " << model.normals[i][0] << " " << model.normals[i][1] << " " << model.normals[i][2] << std::endl;
     }
-    for(int i = 0; i < model.vertex_indices.size(); ++i){
+    for(int i = 0; i < (int)model.vertex_indices.size(); ++i){
         std::cout << "f " << model.vertex_indices[i][0] << " " << model.vertex_indices[i][1] << " " << model.vertex_indices[i][2] << std::endl;
     }
-    for(int i = 0; i < model.texture_indices.size(); ++i){
+    for(int i = 0; i < (int)model.texture_indices.size(); ++i){
         std::cout << "ft " << model.texture_indices[i][0] << " " << model.texture_indices[i][1] << " " << model.texture_indices[i][2] << std::endl;
     }
-    for(int i = 0; i < model.normal_indices.size(); ++i){
+    for(int i = 0; i < (int)model.normal_indices.size(); ++i){
         std::cout << "fn " << model.normal_indices[i][0] << " " << model.normal_indices[i][1] << " " << model.normal_indices[i][2] << std::endl;
     }
     std::cout << "Finish obj read" << std::endl;

@@ -13,6 +13,8 @@ public:
     PrimitiveTriangle(const PrimitiveTriangle& other);
     virtual ~PrimitiveTriangle();
 
+    virtual PrimitiveTriangle* clone() const;
+
 private:
     void setPoints(jVec3& p1, jVec3& p2, jVec3& p3);
 };

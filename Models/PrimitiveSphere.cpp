@@ -72,8 +72,8 @@ void PrimitiveSphere::draw(jMat4& transform){
 
 bool PrimitiveSphere::intersects(Ray& ray, HitRecord& hitRecord, jMat4& transform)
 {
-    jVec3 transformed_origin = this->pos*transform;
-    jVec3 transformed_radius = this->radius_vector*transform;
+    jVec3 transformed_origin = (isFlat) ? this->pos : this->pos*transform;
+    jVec3 transformed_radius = (isFlat) ? this->radius_vector : this->radius_vector*transform;
     float radius = (transformed_radius - transformed_origin).length();
 
     // origin - center
@@ -116,8 +116,8 @@ bool PrimitiveSphere::intersects(Ray& ray, HitRecord& hitRecord, jMat4& transfor
 // normal to a sphere is the exactly the difference vector between
 // the intersection point and the origin of the sphere.
 jVec3 PrimitiveSphere::getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit){
-    jVec3 trans_pos = pos*transform;
-    jVec3 transformed_radius = this->radius_vector*transform;
+    jVec3 trans_pos             = (isFlat) ? pos : pos*transform;
+    jVec3 transformed_radius    = (isFlat) ? radius_vector : radius_vector*transform;
     float radius = (transformed_radius - trans_pos).length();
     return (hitPoint - trans_pos)/radius;
 }
@@ -136,4 +136,8 @@ void  PrimitiveSphere::flatten(jMat4& transform){
     {
         vertices[i] = vertices[i]*transform;
     }
+}
+
+PrimitiveSphere* PrimitiveSphere::clone() const{
+    return new PrimitiveSphere(*this);
 }

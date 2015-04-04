@@ -19,7 +19,9 @@ PrimitiveTriMesh::PrimitiveTriMesh(const PrimitiveTriMesh& other) : Primitive(ot
     vertex_indices = other.vertex_indices;
     texture_indices = other.texture_indices;
     normal_indices = other.normal_indices;
-    has_bounding_box = has_bounding_box;
+
+    boundingbox = other.boundingbox;
+    has_bounding_box = other.has_bounding_box;
 }
 
 PrimitiveTriMesh::~PrimitiveTriMesh(){
@@ -62,9 +64,15 @@ void  PrimitiveTriMesh::draw(jMat4& transform){
 // justin guze - https://github.com/jguze/csc305_graphics
 bool PrimitiveTriMesh::_intersects(Ray& ray,HitRecord& hit,jMat4& transform, int index)
 {
-    jVec3 vec_a = (vertex_pool[vertex_indices[index][0]]*transform);
-    jVec3 vec_b = (vertex_pool[vertex_indices[index][1]]*transform);
-    jVec3 vec_c = (vertex_pool[vertex_indices[index][2]]*transform);
+    jVec3 vec_a = vertex_pool[vertex_indices[index][0]];
+    jVec3 vec_b = vertex_pool[vertex_indices[index][1]];
+    jVec3 vec_c = vertex_pool[vertex_indices[index][2]];
+
+    if(isFlat == false){
+        vec_a = vec_a*transform;
+        vec_b = vec_b*transform;
+        vec_c = vec_c*transform;
+    }
 
     double t, gamma, beta;
     double a = vec_a[0] - vec_b[0];
@@ -134,10 +142,17 @@ bool  PrimitiveTriMesh::intersects(Ray& ray,HitRecord& rs, jMat4& transform){
 
 // retrieve the normal for a particular index
 jVec3 PrimitiveTriMesh::_getNormal(jMat4& transform,int hitIndex){
-    jVec3 p1_trans = vertex_pool[vertex_indices[hitIndex][0]]*transform;
-    jVec3 a = (vertex_pool[vertex_indices[hitIndex][1]]*transform) - p1_trans;
-    jVec3 b = (vertex_pool[vertex_indices[hitIndex][2]]*transform) - p1_trans;
-    return (a^b).normalize();
+    if(isFlat){
+        jVec3 p1_trans = vertex_pool[vertex_indices[hitIndex][0]];
+        jVec3 a = vertex_pool[vertex_indices[hitIndex][1]] - p1_trans;
+        jVec3 b = vertex_pool[vertex_indices[hitIndex][2]] - p1_trans;
+        return (a^b).normalize();
+    }else{
+        jVec3 p1_trans = vertex_pool[vertex_indices[hitIndex][0]]*transform;
+        jVec3 a = (vertex_pool[vertex_indices[hitIndex][1]]*transform) - p1_trans;
+        jVec3 b = (vertex_pool[vertex_indices[hitIndex][2]]*transform) - p1_trans;
+        return (a^b).normalize();
+    }
 }
 
 jVec3 PrimitiveTriMesh::getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit){
@@ -248,4 +263,8 @@ void  PrimitiveTriMesh::flatten(jMat4& transform){
 
     boundingbox.lb = boundingbox.lb*transform;
     boundingbox.rt = boundingbox.rt*transform;
+}
+
+PrimitiveTriMesh* PrimitiveTriMesh::clone() const{
+    return new PrimitiveTriMesh(*this);
 }

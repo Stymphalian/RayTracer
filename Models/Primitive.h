@@ -28,6 +28,7 @@ public:
   virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit) = 0;
   virtual jVec3 getOrigin() = 0;
   virtual void flatten(jMat4& transform) = 0;
+  virtual Primitive* clone() const = 0;
 
   virtual bool hasBoundingBox();
   virtual bool intersectsBoundingBox(Ray& ray);

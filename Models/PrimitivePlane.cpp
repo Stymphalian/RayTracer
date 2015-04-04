@@ -17,3 +17,7 @@ PrimitivePlane::PrimitivePlane(const PrimitivePlane& other): PrimitiveTriMesh(ot
 
 }
 PrimitivePlane::~PrimitivePlane(){}
+
+PrimitivePlane* PrimitivePlane::clone() const{
+    return new PrimitivePlane(*this);
+}

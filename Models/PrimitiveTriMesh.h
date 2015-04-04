@@ -29,6 +29,7 @@ public:
     virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit);
     virtual jVec3 getOrigin();
     virtual void flatten(jMat4& transform);
+    virtual PrimitiveTriMesh* clone() const;
 
 
     virtual bool hasBoundingBox();

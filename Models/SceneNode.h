@@ -20,13 +20,13 @@ public:
     SceneNode(const SceneNode& other);
     virtual ~SceneNode();
 
-
     // interface
     void draw(jMat4& transform);
     HitRecord queryScene(Ray& ray,float min_dist, float max_dist);
     void addChild(SceneNode* child);
     void clear();
     void flatten(jMat4& transform);
+    SceneNode* clone() const;
 
 private:
     void queryScene(Ray& ray, HitRecord&  hitRecord, jMat4& transform);

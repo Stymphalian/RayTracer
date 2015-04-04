@@ -10,8 +10,22 @@ SceneNode::SceneNode(){
     localTransform.toidentity();
 }
 
-SceneNode::SceneNode(const SceneNode& other){
-    //TODO
+SceneNode::SceneNode(const SceneNode& other):
+    localTransform(other.localTransform),
+    parent(other.parent)
+{
+    if(other.sceneObject != NULL){
+        sceneObject = other.sceneObject->clone();
+    }else{
+        sceneObject = NULL;
+    }
+
+    children.resize(other.children.size());
+    for(int i = 0;i < (int)children.size();++i){
+        // create a copy of the new sceneNode
+        children[i] = new SceneNode(*(other.children[i]));
+        children[i]->parent = this;
+    }
 }
 
 SceneNode::~SceneNode(){
@@ -110,4 +124,9 @@ void SceneNode::flatten(jMat4& transform)
     {
         children[i]->flatten(candTransform);
     }
+}
+
+
+SceneNode* SceneNode::clone() const{
+    return new SceneNode(*this);
 }

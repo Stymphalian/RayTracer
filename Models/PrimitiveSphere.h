@@ -22,6 +22,7 @@ public:
   virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit);
   virtual jVec3 getOrigin();
   virtual void flatten(jMat4& transform);
+  virtual PrimitiveSphere* clone() const;
 
 protected:
   std::vector<jVec3> vertices;

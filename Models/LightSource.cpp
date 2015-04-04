@@ -7,9 +7,12 @@ LightSource::LightSource(Primitive* wrapped, float intensity) : Primitive(){
     this->intensity = intensity;
 }
 
-LightSource::LightSource(const LightSource& other): Primitive(other){
-    //TODO
+LightSource::LightSource(const LightSource& other): Primitive(other),
+    intensity(other.intensity)
+{
+    wrapped = other.wrapped->clone();
 }
+
 
 LightSource::~LightSource(){
     delete wrapped;
@@ -39,7 +42,12 @@ jVec3 LightSource::getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit){
 jVec3 LightSource::getOrigin(){
     return this->wrapped->getOrigin();
 }
-void LightSource::flatten(jMat4& transform){    
+void LightSource::flatten(jMat4& transform){
+    this->isFlat = true;
     this->wrapped->flatten(transform);
+}
+
+LightSource* LightSource::clone() const{
+    return new LightSource(*this);
 }
 

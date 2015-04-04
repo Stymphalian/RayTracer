@@ -15,8 +15,7 @@ PrimitiveTriangle::PrimitiveTriangle(jVec3 p1,jVec3 p2, jVec3 p3):PrimitiveTriMe
     has_bounding_box = false;
 }
 PrimitiveTriangle::PrimitiveTriangle(const PrimitiveTriangle& other): PrimitiveTriMesh(other)
-{
-}
+{}
 
 PrimitiveTriangle::~PrimitiveTriangle(){
 
@@ -32,4 +31,8 @@ void PrimitiveTriangle::setPoints(jVec3& p1, jVec3& p2, jVec3& p3){
     vertex_pool.push_back(p3);
 
     vertex_indices.push_back(jVec3(0,1,2));
+}
+
+PrimitiveTriangle* PrimitiveTriangle::clone() const{
+    return new PrimitiveTriangle(*this);
 }
