@@ -6,7 +6,13 @@
 // added progress bar to show memory usage.
 //-------------------------------------------------------------------------------------------
 
+#include <QtOpenGL>
+#if defined(Q_WS_MAC)
+#include <OpenGL/glu.h>
+#else
 #include <GL/glu.h>
+#endif
+
 #include <QVector3D>
 #include <QMatrix4x4>
 #include "glwidget2.h"

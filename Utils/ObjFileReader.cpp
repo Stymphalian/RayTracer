@@ -16,7 +16,7 @@ std::vector<std::string> split(const std::string& line, const char* delims, int 
         char c = line[i];
 
         // check for delimiters
-        boolean flag = false;
+        bool flag = false;
         for(int j = 0; j < num_delims; ++j){
             if( c == delims[j]){
                 flag = true;
