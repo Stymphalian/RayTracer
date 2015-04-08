@@ -11,6 +11,7 @@ bool MaterialFileReader::read(const char* filename,std::map<std::string,Material
     std::ifstream fin;
     fin.open(filename,ios::in);
     if(!fin.is_open()){
+        std::cout << "Failed to open materials file: '" << filename << "'" << std::endl;
         return false;
     }
 
@@ -24,7 +25,7 @@ bool MaterialFileReader::read(const char* filename,std::map<std::string,Material
         Material m;
         char material_name[50];
 
-        sscanf(line.c_str(),"%s,%lf,%lf,%lf, %lf,%lf,%lf, %lf,%lf,%lf, %lf,%lf,%lf, %f, %f, %f,%f, %lf,%lf,%lf",
+        sscanf(line.c_str(),"%[^,],%lf,%lf,%lf, %lf,%lf,%lf, %lf,%lf,%lf, %lf,%lf,%lf, %f, %f, %f,%f, %lf,%lf,%lf",
             material_name,
             &m.color[0],&m.color[1],&m.color[2],
             &m.ambient[0],&m.ambient[1],&m.ambient[2],

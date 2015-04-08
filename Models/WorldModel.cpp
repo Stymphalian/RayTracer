@@ -56,14 +56,14 @@ PrimitiveTriMesh* createMesh(){
 
 void WorldModel::setupWorld()
 {
-    MaterialFactory matFact;
+    MaterialFactory& matFact = MaterialFactory::getInstance();
     root = new SceneNode();
     root->sceneObject = NULL;
     SceneNode* n;
 
     n = new SceneNode();
     n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
-    n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
+    n->sceneObject->material = matFact.get("WOOD");
     // n->sceneObject->material = matFact.get(MaterialFactory::GLASS);
     n->localTransform.toidentity();
     n->localTransform.scale(2,2,2);
@@ -72,7 +72,7 @@ void WorldModel::setupWorld()
 
     n = new SceneNode();
     n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
-    n->sceneObject->material = matFact.get(MaterialFactory::PINE);
+    n->sceneObject->material = matFact.get("PINE");
     n->localTransform.toidentity();
     // n->localTransform.scale(2,2,2);
     // n->localTransform.translate(3,3,2.2);
@@ -81,7 +81,7 @@ void WorldModel::setupWorld()
 
     n = new SceneNode();
     n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
-    n->sceneObject->material = matFact.get(MaterialFactory::PINE);
+    n->sceneObject->material = matFact.get("PINE");
     n->localTransform.toidentity();
     // n->localTransform.scale(2,2,2);
     // n->localTransform.translate(3,3,2.2);
@@ -90,28 +90,28 @@ void WorldModel::setupWorld()
 
     n = new SceneNode();
     n->sceneObject = new PrimitiveTriangle(jVec3(-2,1,0),jVec3(0,0,1),jVec3(0,0,-1));
-    n->sceneObject->material = matFact.get(MaterialFactory::PINE);
+    n->sceneObject->material = matFact.get("PINE");
     n->localTransform.scale(3,3,3);
     n->localTransform.translate(0,-1,-3);
     root->addChild(n);
 
     n = new SceneNode();
     n->sceneObject = createMesh();
-    n->sceneObject->material = matFact.get(MaterialFactory::SILVER);
+    n->sceneObject->material = matFact.get("SILVER");
     n->localTransform.scale(3,3,3);
     n->localTransform.translate(0,5,0);
     root->addChild(n);
 
     n = new SceneNode();
     n->sceneObject = new PrimitiveCube(jVec3(-1,-1,1),jVec3(1,1,-1));
-    n->sceneObject->material = matFact.get(MaterialFactory::CHARCOAL);
+    n->sceneObject->material = matFact.get("CHARCOAL");
     n->localTransform.scale(0.5,0.5,0.5);
     n->localTransform.translate(-1.5,8,0);
     root->addChild(n);
 
     n = new SceneNode();
     n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
-    n->sceneObject->material = matFact.get(MaterialFactory::BRONZE);
+    n->sceneObject->material = matFact.get("BRONZE");
     n->localTransform.scale(10,10,10);
     n->localTransform.translate(0,-2,0);
     root->addChild(n);
@@ -124,7 +124,7 @@ void WorldModel::setupWorld()
     // PrimitiveTriMesh* mesh = new PrimitiveTriMesh();
     // mesh->fillTriMeshFromObjFile(obj_model);
     // n->sceneObject = mesh;
-    // n->sceneObject->material = matFact.get(MaterialFactory::WOOD);
+    // n->sceneObject->material = matFact.get("WOOD");
     // n->localTransform.scale(2,2,2);
     // n->localTransform.translate(5,5,0);
     // root->addChild(n);
@@ -134,7 +134,7 @@ void WorldModel::setupWorld()
     Primitive* p = new PrimitiveSphere(jVec3(0,0,0),0.1);
     n->sceneObject = new LightSource(p,1.0f);
     n->sceneObject->isLight = true;
-    n->sceneObject->material = matFact.get(MaterialFactory::WHITE_LIGHT);
+    n->sceneObject->material = matFact.get("WHITELIGHT");
     n->localTransform.translate(-10,10,-5);
     root->addChild(n);
 
@@ -142,7 +142,7 @@ void WorldModel::setupWorld()
     p = new PrimitiveSphere(jVec3(0,0,0),0.1);
     n->sceneObject = new LightSource(p,1.0f);
     n->sceneObject->isLight = true;
-    n->sceneObject->material = matFact.get(MaterialFactory::WHITE_LIGHT);
+    n->sceneObject->material = matFact.get("WHITELIGHT");
     //n->localTransform.translate(8,8,5);
     n->localTransform.translate(9,9,6.6);
     root->addChild(n);
