@@ -12,6 +12,8 @@ public:
   jVec3 pos;
   double radius;
   jVec3 radius_vector;
+  int num_lats;
+  int num_longs;
 
   PrimitiveSphere(jVec3 pos, double radius);
   PrimitiveSphere(const PrimitiveSphere& other);
@@ -26,6 +28,7 @@ public:
 
 protected:
   std::vector<jVec3> vertices;
+  std::vector<jVec3> vertex_indices;
 };
 
 #endif

@@ -237,6 +237,12 @@ public:
         z = _z;
     }
 
+    void toOpenGLFormat(GLfloat* arr){
+      arr[0] = x;
+      arr[1] = y;
+      arr[2] = z;
+    }
+
     //! Computes the length of the given vector.
     inline jFlt length () const;
 

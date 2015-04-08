@@ -1,14 +1,30 @@
 #include "LightSource.h"
 #include "Primitive.h"
 #include "RayTracer/HitRecord.h"
+#include <QtOpenGL>
+
+static GLenum light_enums[] ={
+    GL_LIGHT0,
+    GL_LIGHT1,
+    GL_LIGHT2,
+    GL_LIGHT3,
+    GL_LIGHT4,
+    GL_LIGHT5,
+    GL_LIGHT6,
+    GL_LIGHT7
+};
+int LightSource::light_source_num = 0;
 
 LightSource::LightSource(Primitive* wrapped, float intensity) : Primitive(){
     this->wrapped = wrapped;
     this->intensity = intensity;
+    this->light_num = LightSource::light_source_num;
+    LightSource::light_source_num += 1;
 }
 
 LightSource::LightSource(const LightSource& other): Primitive(other),
-    intensity(other.intensity)
+    intensity(other.intensity),
+    light_num(other.light_num)
 {
     wrapped = other.wrapped->clone();
 }
@@ -27,6 +43,23 @@ jVec3 LightSource::getEmmitance(){
 }
 
 void LightSource::draw(jMat4& transform){
+
+    glEnable(light_enums[light_num]);
+    GLfloat vec[4];
+
+    jVec3 pos3 = getOrigin()*transform;
+    pos3.toOpenGLFormat(vec);
+    glLightfv(light_enums[light_num],GL_POSITION,vec);
+
+    this->material.ambient.toOpenGLFormat(vec);
+    glLightfv(light_enums[light_num],GL_AMBIENT,vec);
+
+    this->material.diffuse.toOpenGLFormat(vec);
+    glLightfv(light_enums[light_num],GL_DIFFUSE,vec);
+
+    this->material.specular.toOpenGLFormat(vec);
+    glLightfv(light_enums[light_num],GL_SPECULAR,vec);
+
     this->wrapped->material = this->material;
     this->wrapped->draw(transform);
 }

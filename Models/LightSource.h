@@ -5,8 +5,12 @@
 
 class LightSource : public Primitive {
 public:
-    Primitive* wrapped;
+    static int light_source_num;
+
+    int light_num;
     float intensity;
+    Primitive* wrapped;
+
 
     // methods
     LightSource(Primitive* wrappee,float intensity);

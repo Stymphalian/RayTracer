@@ -15,9 +15,9 @@ PrimitiveSphere::PrimitiveSphere(jVec3 pos, double radius) : Primitive()
     this->pos = pos;
     this->radius = radius;
     this->radius_vector = jVec3(radius,0,0);
+    this->num_lats = 20;
+    this->num_longs = 20;
 
-    int num_lats = 20;
-    int num_longs = 20;
     float x,y,z,r;
     const double pi = 3.14159265358979323;
     const float long_divs = pi/num_longs;
@@ -36,6 +36,26 @@ PrimitiveSphere::PrimitiveSphere(jVec3 pos, double radius) : Primitive()
         }
     }
 
+    // ignore the last.
+    for(int lat = 0; lat  < num_lats -1; ++lat){
+        for(int longs = 0; longs < num_longs ; ++longs){
+            int next_long = (longs + 1) % num_longs;
+            int next_lat = lat + 1;
+
+            // make two triangle whcih represent a quad face of the sphere.
+            int v1 = lat*num_longs + longs;
+            int v2 = next_lat*num_longs + longs;
+            int v3 = lat*num_longs + next_long;
+            jVec3 v(v1,v2,v3);
+            vertex_indices.push_back(v);
+
+            v1 = next_lat*num_longs + longs;
+            v2 = next_lat*num_longs + next_long;
+            v3 = lat*num_longs + next_long;
+            v.setValues(v1,v2,v3);
+            vertex_indices.push_back(v);
+        }
+    }
 }
 
 PrimitiveSphere::PrimitiveSphere(const PrimitiveSphere& other) : Primitive(other){
@@ -43,22 +63,42 @@ PrimitiveSphere::PrimitiveSphere(const PrimitiveSphere& other) : Primitive(other
     radius = other.radius;
     radius_vector = other.radius_vector;
     vertices = other.vertices;
+    vertex_indices = other.vertex_indices;
+    num_lats = other.num_lats;
+    num_longs = other.num_longs;
 }
 
 PrimitiveSphere::~PrimitiveSphere(){}
 
 void PrimitiveSphere::draw(jMat4& transform){
-    glBegin(GL_POINTS);
 
     glColor3f(material.color[0],material.color[1],material.color[2]);
+
     jVec3 v;
-    for(int i = 0;i < (int) vertices.size(); ++i)
-    {
-        v = vertices[i]*transform;
-        //qDebug("%f %f %f --> %f %f %f",vertices[i][0],vertices[i][1],vertices[i][2],v[0],v[1],v[2]);
+    int size = vertex_indices.size();
+    glBegin(GL_TRIANGLES);
+    for(int i = 0 ;i < size; ++i){
+        v = vertices[vertex_indices[i][0]]*transform;
+        glVertex3f(v[0],v[1],v[2]);
+
+        v = vertices[vertex_indices[i][1]]*transform;
+        glVertex3f(v[0],v[1],v[2]);
+
+        v = vertices[vertex_indices[i][2]]*transform;
         glVertex3f(v[0],v[1],v[2]);
     }
     glEnd();
+
+    // glBegin(GL_POINTS);
+    // glColor3f(material.color[0],material.color[1],material.color[2]);
+    // jVec3 v;
+    // for(int i = 0;i < (int) vertices.size(); ++i)
+    // {
+    //     v = vertices[i]*transform;
+    //     //qDebug("%f %f %f --> %f %f %f",vertices[i][0],vertices[i][1],vertices[i][2],v[0],v[1],v[2]);
+    //     glVertex3f(v[0],v[1],v[2]);
+    // }
+    // glEnd();
 
    //  qDebug("---matrix begin----");
    // GLfloat matrix[16];

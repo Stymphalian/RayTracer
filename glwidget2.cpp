@@ -55,6 +55,8 @@ void GLWidget2::initializeGL()
      glShadeModel( GL_FLAT );
      glMatrixMode( GL_MODELVIEW );
 
+     //glEnable(GL_LIGHTING);
+
      // allow the specification of geometry using vertex arrays.
      glEnableClientState(GL_VERTEX_ARRAY);
      //glEnableClientState(GL_COLOR_ARRAY);
