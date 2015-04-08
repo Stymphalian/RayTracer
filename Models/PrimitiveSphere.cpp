@@ -10,7 +10,7 @@
 #include "RayTracer/Ray.h"
 #include "RayTracer/HitRecord.h"
 
-PrimitiveSphere::PrimitiveSphere(jVec3 pos, double radius) : Primitive()
+PrimitiveSphere::PrimitiveSphere(jVec3 pos, double radius) : PrimitiveTriMesh()
 {
     this->pos = pos;
     this->radius = radius;
@@ -32,7 +32,7 @@ PrimitiveSphere::PrimitiveSphere(jVec3 pos, double radius) : Primitive()
             z = sin(lat_divs*lat)*r;
 
             jVec3 v(x,y,z);
-            vertices.push_back(v);
+            vertex_pool.push_back(v);
         }
     }
 
@@ -56,59 +56,19 @@ PrimitiveSphere::PrimitiveSphere(jVec3 pos, double radius) : Primitive()
             vertex_indices.push_back(v);
         }
     }
+
+    has_bounding_box = false;
 }
 
-PrimitiveSphere::PrimitiveSphere(const PrimitiveSphere& other) : Primitive(other){
+PrimitiveSphere::PrimitiveSphere(const PrimitiveSphere& other) : PrimitiveTriMesh(other){
     pos = other.pos;
     radius = other.radius;
     radius_vector = other.radius_vector;
-    vertices = other.vertices;
-    vertex_indices = other.vertex_indices;
     num_lats = other.num_lats;
     num_longs = other.num_longs;
 }
 
 PrimitiveSphere::~PrimitiveSphere(){}
-
-void PrimitiveSphere::draw(jMat4& transform){
-
-    glColor3f(material.color[0],material.color[1],material.color[2]);
-
-    jVec3 v;
-    int size = vertex_indices.size();
-    glBegin(GL_TRIANGLES);
-    for(int i = 0 ;i < size; ++i){
-        v = vertices[vertex_indices[i][0]]*transform;
-        glVertex3f(v[0],v[1],v[2]);
-
-        v = vertices[vertex_indices[i][1]]*transform;
-        glVertex3f(v[0],v[1],v[2]);
-
-        v = vertices[vertex_indices[i][2]]*transform;
-        glVertex3f(v[0],v[1],v[2]);
-    }
-    glEnd();
-
-    // glBegin(GL_POINTS);
-    // glColor3f(material.color[0],material.color[1],material.color[2]);
-    // jVec3 v;
-    // for(int i = 0;i < (int) vertices.size(); ++i)
-    // {
-    //     v = vertices[i]*transform;
-    //     //qDebug("%f %f %f --> %f %f %f",vertices[i][0],vertices[i][1],vertices[i][2],v[0],v[1],v[2]);
-    //     glVertex3f(v[0],v[1],v[2]);
-    // }
-    // glEnd();
-
-   //  qDebug("---matrix begin----");
-   // GLfloat matrix[16];
-   // transform.toOpenGLMat(matrix);
-   // for(int i = 0;i < 4; ++i){
-   //     qDebug("%f %f %f %f",matrix[i*4],matrix[i*4 +1],matrix[i*4 + 2],matrix[i*4 +3]);
-   // }
-   // qDebug("");
-   // qDebug("----");
-}
 
 bool PrimitiveSphere::intersects(Ray& ray, HitRecord& hitRecord, jMat4& transform)
 {
@@ -165,17 +125,14 @@ jVec3 PrimitiveSphere::getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit)
 jVec3 PrimitiveSphere::getOrigin(){
     return pos;
 }
+
 void  PrimitiveSphere::flatten(jMat4& transform){
+    PrimitiveTriMesh::flatten(transform);
     isFlat = true;
 
     pos = pos*transform;
     radius_vector = radius_vector*transform;
     radius = (radius_vector - pos).length();
-
-    for(int i = 0;i < (int)vertices.size(); ++i)
-    {
-        vertices[i] = vertices[i]*transform;
-    }
 }
 
 PrimitiveSphere* PrimitiveSphere::clone() const{
