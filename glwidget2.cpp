@@ -56,6 +56,7 @@ void GLWidget2::initializeGL()
      glMatrixMode( GL_MODELVIEW );
 
      glEnable(GL_LIGHTING);
+     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,GL_TRUE);
 
      // allow the specification of geometry using vertex arrays.
      glEnableClientState(GL_VERTEX_ARRAY);

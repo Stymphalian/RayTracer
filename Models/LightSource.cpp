@@ -46,10 +46,14 @@ void LightSource::draw(jMat4& transform){
 
     glEnable(light_enums[light_num]);
     GLfloat vec[4];
+    vec[3] = 1.0f;
 
+    glPushMatrix();
+    glLoadIdentity();
     jVec3 pos3 = getOrigin()*transform;
     pos3.toOpenGLFormat(vec);
     glLightfv(light_enums[light_num],GL_POSITION,vec);
+    glPopMatrix();
 
     this->material.ambient.toOpenGLFormat(vec);
     glLightfv(light_enums[light_num],GL_AMBIENT,vec);

@@ -41,13 +41,41 @@ bool PrimitiveTriMesh::intersectsBoundingBox(Ray& ray){
 }
 
 void  PrimitiveTriMesh::draw(jMat4& transform){
-    glColor3f(material.color[0],material.color[1],material.color[2]);
+    GLboolean status;
+    glGetBooleanv(GL_LIGHTING,&status);
+    if(status){
+        jVec3 v2;
+        GLfloat vec[4];
+        vec[3] = 1.0f;
+
+        v2 = this->material.ambient.outerProduct(this->material.color);
+        v2.toOpenGLFormat(vec);
+        glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,vec);
+
+        v2 = this->material.diffuse.outerProduct(this->material.color);
+        v2.toOpenGLFormat(vec);
+        glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,vec);
+
+        v2 = this->material.specular.outerProduct(this->material.color);
+        v2.toOpenGLFormat(vec);
+        glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,vec);
+
+        glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,this->material.shininess);
+
+    }else{
+        glColor3f(material.color[0],material.color[1],material.color[2]);
+    }
+
 
     jVec3 v;
+    jVec3 n;
     int size = vertex_indices.size();
     glBegin(GL_TRIANGLES);
+    jMat4 inv_transform = transform.inverse().transpose();
     for(int i = 0 ;i < size; ++i){
         v = vertex_pool[vertex_indices[i][0]]*transform;
+        n = _getNormal(inv_transform,i);
+        glNormal3f(n[0],n[1],n[2]);
         glVertex3f(v[0],v[1],v[2]);
 
         v = vertex_pool[vertex_indices[i][1]]*transform;
