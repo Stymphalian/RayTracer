@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     Models/PrimitiveCube.cpp \
     Models/PrimitivePlane.cpp \
     Utils/ObjFileReader.cpp \
-    Models/AABB.cpp
+    Models/AABB.cpp \
+    Utils/MaterialFileReader.cpp
 
 HEADERS  += mainwindow.h \
     glwidget.h \
@@ -57,6 +58,7 @@ HEADERS  += mainwindow.h \
     Models/PrimitiveCube.h \
     Models/PrimitivePlane.h \
     Utils/ObjFileReader.h \
-    Models/AABB.h
+    Models/AABB.h \
+    Utils/MaterialFileReader.h
 
 FORMS    += mainwindow.ui

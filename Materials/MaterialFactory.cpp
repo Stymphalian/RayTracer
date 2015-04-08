@@ -49,7 +49,7 @@ Material MaterialFactory::get(MATERIAL_E type){
 
         case(MaterialFactory::GLASS):
             m.set(jVec3(0,0.08,0.12),
-                jVec3(0.05,0.05,0.05),jVec3(0.-5,0.05,0.05), jVec3(0,0,0),
+                jVec3(0.05,0.05,0.05),jVec3(0.05,0.05,0.05), jVec3(0,0,0),
                 3.0,0.28,
                 0.8,1.40,jVec3(0.4,0.4,0.3));
             break;

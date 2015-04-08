@@ -116,9 +116,9 @@ void ObjFileReader::read(const char* filename,Obj_Model* model){
     while(std::getline(file,line))
     {
         // ignore comment lines
+        if( line.size() == 0){continue;}
         if( line[0] == '#'){continue;}
         if( line[0] == '\n'){continue;}
-        if( line.size() == 0){continue;}
 
         // process into tokens in order to make parsing easier.
         std::vector<std::string> tokens = split(line,delims,num_delims,false);

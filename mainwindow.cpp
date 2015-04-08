@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "Utils/ObjFileReader.h"
+#include "Utils/MaterialFileReader.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -12,10 +13,12 @@ MainWindow::MainWindow(QWidget *parent) :
     //reader.test();
     //reader.read("test.obj",&obj_model);
 
+    // MaterialFileReader mat_reader;
+    // mat_reader.test();
+
     connect(ui->actionSave_As,SIGNAL(triggered(bool)),this,SLOT(save_as(bool)));
     connect(ui->actionBegin_Ray_Trace,SIGNAL(triggered(bool)),this,SLOT(ray_trace(bool)));
     ui->widget->setModel(&model);
-    //ui->widget->setProgressBar(ui->progressBar);
     ui->widget_2->setModel(&model);
 }
 
