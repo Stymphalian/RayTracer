@@ -6,6 +6,7 @@
 #include "Models/SceneNode.h"
 #include "Models/LightSource.h"
 #include "Utils/linearalgebra.h"
+#include "Utils/jrand.h"
 #include "../glwidget.h"
 
 RayTracer::RayTracer(): QObject(0),epsilon(0.001f){
@@ -14,12 +15,13 @@ RayTracer::RayTracer(): QObject(0),epsilon(0.001f){
     max_depth = 3;
     defaultRefractionIndex = 1.0f;
 
-    sum = 0;
-    count = 0;
+    enableJitterSampling= true;
+    numberJitterRows = 4;
+    numberJitterCols = 4;
 }
 RayTracer::~RayTracer(){
     //qDebug() << "destroying ray tracer " << thread()->currentThreadId();
-    qDebug() << sum << " " << count << " " << sum/count;
+    //qDebug() << sum << " " << count << " " << sum/count;
 }
 
 // void RayTracer::render(QImage& ca,SceneNode& s,std::vector<LightSource*>& l,Camera& cam){
@@ -40,17 +42,39 @@ void RayTracer::render(int id,QImage* ca,WorldModel* model,int start_row,int end
     int renderHeight = canvas->height();
     jVec3 pixelColor(0,0,0);
     ray.calcUVW((camera->at - camera->pos),jVec3(0,1,0));
+    jRand& jrand = jRand::getInstance();
 
 // loop through each pixel
     for (int row = start_row; row <= end_row; ++row){
         for(int col = 0; col < renderWidth; ++col){
-            ray.calcRay(renderWidth,renderHeight,col,renderHeight - row,camera->pos,camera->focalLength);
-            ray.dir.normalize();
-            ray.refractIndex= defaultRefractionIndex;
-            pixelColor = trace(ray,max_depth);
+            if( enableJitterSampling == false){
+                ray.calcRay(renderWidth,renderHeight,col,renderHeight - row,camera->pos,camera->focalLength);
+                ray.dir.normalize();
+                ray.refractIndex= defaultRefractionIndex;
+                pixelColor = trace(ray,max_depth);
 
-            // set the pixel color
-            canvas->setPixel(col,row,qRgb(pixelColor[0]*255,pixelColor[1]*255,pixelColor[2]*255));
+                // set the pixel color
+                canvas->setPixel(col,row,qRgb(pixelColor[0]*255,pixelColor[1]*255,pixelColor[2]*255));
+            }else{
+                // jitter for 16 samples
+                pixelColor = jVec3(0,0,0);
+                for(int p = 0; p < numberJitterCols; ++p){
+                    for(int q = 0; q< numberJitterRows; ++q){
+                        ray.calcRay(renderWidth,renderHeight,
+                                            col + (p + jrand())/numberJitterCols,
+                                            (renderHeight - row) + (q + jrand())/numberJitterRows,
+                                            camera->pos,camera->focalLength);
+                        ray.dir.normalize();
+                        ray.refractIndex = defaultRefractionIndex;
+                        pixelColor += trace(ray,max_depth);
+                    }
+                }
+
+                // average out the pixel color
+                pixelColor = pixelColor/(numberJitterRows*numberJitterCols);
+                // set the pixel color
+                canvas->setPixel(col,row,qRgb(pixelColor[0]*255,pixelColor[1]*255,pixelColor[2]*255));
+            }
         }
 
         // update the progress bar
@@ -218,7 +242,7 @@ float RayTracer::getSchlickApproximation(float refractionIndex,float cos_theta){
 bool RayTracer::isInShadow(HitRecord& hit,LightSource& light,Ray& ray)
 {
     // didn't hit any object, not even the light...
-    if(hit.hit == false){return true;}
+    if(hit.hit == false){return false;}
 
     // hit an object, but it was the light.
     if(hit.hitObject == &light){

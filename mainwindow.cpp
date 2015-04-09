@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "Utils/ObjFileReader.h"
 #include "Utils/MaterialFileReader.h"
+#include "Utils/jRand.h"
 #include "Materials/MaterialFactory.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -9,6 +10,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    jRand& jrand = jRand::getInstance();
+    jrand.init(400);
 
     //ObjFileReader reader;
     //reader.test();

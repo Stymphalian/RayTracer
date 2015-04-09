@@ -43,12 +43,14 @@ protected:
     int start_row;
     int end_row;
 
-
     int max_depth;
     float defaultRefractionIndex;
     float min_dist;
     float max_dist;
     const float epsilon;
+    bool enableJitterSampling;
+    int numberJitterRows;
+    int numberJitterCols;
 
     jVec3 reflectRefract(Ray& ray, HitRecord& hitRecord,int depth,
             jVec3& surfaceNormal,Material& hitMaterial,jVec3& hitPoint);

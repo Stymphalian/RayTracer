@@ -56,6 +56,26 @@ PrimitiveTriMesh* createMesh(){
     return mesh;
 }
 
+PrimitiveTriMesh* createLightMesh(){
+    PrimitiveTriMesh* mesh = new PrimitiveTriMesh();
+
+    mesh->vertex_pool.push_back(jVec3(-1,0,-1)); // 0
+    mesh->vertex_pool.push_back(jVec3(0,0,0)); // 1
+    mesh->vertex_pool.push_back(jVec3(0,1,0)); // 2
+    mesh->vertex_pool.push_back(jVec3(-1,1,-1)); //3
+    // mesh->vertex_pool.push_back(jVec3(1,0,-1)); // 4
+    // mesh->vertex_pool.push_back(jVec3(1,1,-1)); // 5
+
+    mesh->vertex_indices.push_back(jVec3(0,1,3));
+    mesh->vertex_indices.push_back(jVec3(1,2,3));
+
+    // mesh->vertex_indices.push_back(jVec3(4,1,5));
+    // mesh->vertex_indices.push_back(jVec3(1,2,5));
+
+    mesh->has_bounding_box = false;
+    return mesh;
+}
+
 void WorldModel::setupWorld()
 {
     MaterialFactory& matFact = MaterialFactory::getInstance();
@@ -176,10 +196,20 @@ void WorldModel::setupWorld()
 
             n = new SceneNode();
             // n->sceneObject = new LightSource(new PrimitiveSphere(jVec3(0,0,0),0.1),1.0f);
-            n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,-1,0),jVec3(1,-1,0),jVec3(1,1,0),jVec3(-1,1,0)),1.0f);
+            // n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,-1,0),jVec3(1,-1,0),jVec3(1,1,0),jVec3(-1,1,0)),1.0f);
+            // n->sceneObject = new LightSource(createLightMesh(),1.0f);
+            n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,0,-1),jVec3(0,0,0),jVec3(0,1,0),jVec3(-1,1,-1)),1.0f);
             n->sceneObject->isLight = true;
             n->sceneObject->material = matFact.get("WHITELIGHT");
-            n->localTransform.translate(0,10,2);
+            n->localTransform.translate(0,2,2);
+            root->addChild(n);
+
+            n = new SceneNode();
+            // n->sceneObject = new LightSource(new PrimitivePlane(jVec3(1,0,-1),jVec3(0,0,0),jVec3(0,1,0),jVec3(1,1,-1)),1.0f);
+            n->sceneObject = new LightSource(new PrimitivePlane(jVec3(0,0,0),jVec3(1,0,-1),jVec3(1,1,-1),jVec3(0,1,0)),1.0f);
+            n->sceneObject->isLight = true;
+            n->sceneObject->material = matFact.get("WHITELIGHT");
+            n->localTransform.translate(0,2,2);
             root->addChild(n);
 }
 
