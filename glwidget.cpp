@@ -167,12 +167,12 @@ void GLWidget::makeImage( )
 
 void GLWidget::handle_started(){
     num_running_threads += 1;
-    qDebug() << "Handle started " << num_running_threads;
+    //qDebug() << "Handle started " << num_running_threads;
 }
 
 void GLWidget::handle_finished(){
     num_running_threads -= 1;
-    qDebug() << "Handle finished "<< num_running_threads;
+//    qDebug() << "Handle finished "<< num_running_threads;
 
     if( num_running_threads == 0){
         // clean up all the threads + workers
@@ -195,11 +195,11 @@ void GLWidget::handle_finished(){
 }
 
 void GLWidget::handle_terminated(){
-    qDebug() << "Handle terminated";
+    //qDebug() << "Handle terminated";
 }
 
 void GLWidget::handle_render_row_finished(){
     progress_count += 1;
     emit updateProgress(progress_count);
-    qDebug() << "Render Row Finished "<< progress_count;
+    //qDebug() << "Render Row Finished "<< progress_count;
 }

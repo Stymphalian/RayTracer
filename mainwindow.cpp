@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "Utils/ObjFileReader.h"
 #include "Utils/MaterialFileReader.h"
+#include "Materials/MaterialFactory.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -56,4 +57,9 @@ void MainWindow::save_as(bool value)
 void MainWindow::ray_trace(bool)
 {
     ui->widget->makeImage();
+}
+
+void MainWindow::refreshMaterials(){
+  MaterialFactory::getInstance().refresh();
+  model.reload();
 }

@@ -25,15 +25,7 @@ private:
 private slots:
     void save_as(bool);
     void ray_trace(bool);
+    void refreshMaterials();
 };
 
 #endif // MAINWINDOW_H
-
-/*
-refractions
-obj files
-solid surfaces for opengl draw
-materials read from file?
-
-
-*/

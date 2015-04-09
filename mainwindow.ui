@@ -58,6 +58,19 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>1080</x>
+      <y>150</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reload Materials</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -107,6 +120,7 @@
    <container>1</container>
    <slots>
     <signal>updateUI(QString)</signal>
+    <slot>refreshMaterials()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -160,5 +174,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>refreshMaterials()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1106</x>
+     <y>192</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1173</x>
+     <y>330</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>refreshMaterials()</slot>
+ </slots>
 </ui>

@@ -56,7 +56,7 @@ Ray Ray::reflect(jVec3& origin,jVec3& normal){
 bool Ray::refract(jVec3& origin, jVec3& incomingDir,jVec3& normal,
     float inRefractionIndex, float outRefractionIndex,
     Ray* outputRay)
-{    
+{
     float dn = incomingDir*normal;
     float ratio = inRefractionIndex/outRefractionIndex;
     float descriminant = 1 - ratio*ratio*(1-dn*dn);
@@ -64,10 +64,12 @@ bool Ray::refract(jVec3& origin, jVec3& incomingDir,jVec3& normal,
         return true;
     }
 
+    // in order to ensure that we don't hit ourselves
     outputRay->origin = origin;
 
     jVec3 p = ratio*(incomingDir - normal*dn);
     outputRay->dir = p - normal*sqrt(descriminant);
     outputRay->dir.normalize();
+
     return false;
 }

@@ -13,13 +13,28 @@ static GLenum light_enums[] ={
     GL_LIGHT6,
     GL_LIGHT7
 };
-int LightSource::light_source_num = 0;
+static bool lights_taken[] = {
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+};
 
 LightSource::LightSource(Primitive* wrapped, float intensity) : Primitive(){
     this->wrapped = wrapped;
     this->intensity = intensity;
-    this->light_num = LightSource::light_source_num;
-    LightSource::light_source_num += 1;
+    for(int i = 0;i < 8 ; ++i){
+        if( lights_taken[i] == false){
+            lights_taken[i] = true;
+            this->light_num = i;
+            break;
+        }
+    }
+
 }
 
 LightSource::LightSource(const LightSource& other): Primitive(other),
@@ -32,6 +47,8 @@ LightSource::LightSource(const LightSource& other): Primitive(other),
 
 LightSource::~LightSource(){
     delete wrapped;
+    lights_taken[light_num] = false;
+    glDisable(light_enums[light_num]);
 }
 
 jVec3 LightSource::getDirection(jVec3& hitPoint){

@@ -15,7 +15,7 @@ RayTracer::RayTracer(): QObject(0),epsilon(0.001f){
     defaultRefractionIndex = 1.0f;
 }
 RayTracer::~RayTracer(){
-    qDebug() << "destroying ray tracer " << thread()->currentThreadId();
+    //qDebug() << "destroying ray tracer " << thread()->currentThreadId();
 }
 
 // void RayTracer::render(QImage& ca,SceneNode& s,std::vector<LightSource*>& l,Camera& cam){
@@ -47,10 +47,6 @@ void RayTracer::render(int id,QImage* ca,WorldModel* model,int start_row,int end
 
             // set the pixel color
             canvas->setPixel(col,row,qRgb(pixelColor[0]*255,pixelColor[1]*255,pixelColor[2]*255));
-
-            // update the progress bar
-            //widget->_updateProgress((row*renderHeight + col)/(renderHeight*renderWidth));
-            //widget->_updateProgress(100*((float)(row*renderHeight + col)/(renderHeight*renderWidth)));
         }
 
         // update the progress bar
@@ -129,10 +125,9 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
 
     }
 
-
     // reflection + refraction
     jVec3 reflectRefractColor(0,0,0);
-    if( material.reflection > 0.0f && material.refraction > 0.0f){
+    if( material.reflection > 0.0f || material.refraction > 0.0f){
         reflectRefractColor = reflectRefract(ray,hit,depth,surfaceNormal,material,hitPoint);
     }
     pixelColor += reflectRefractColor;
@@ -154,7 +149,6 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
 jVec3 RayTracer::reflectRefract(Ray& ray, HitRecord& hitRecord,int depth,
     jVec3& surfaceNormal,Material& material,jVec3& hitPoint)
 {
-    jVec3 pixelColor(0,0,0);
     jVec3 reflectColor(0,0,0);
 
     if( material.reflection > 0.0f){
@@ -162,8 +156,8 @@ jVec3 RayTracer::reflectRefract(Ray& ray, HitRecord& hitRecord,int depth,
         reflectColor += material.reflection*trace(reflectRay,depth-1);
     }
 
-
     if( material.refraction > 0.0f){
+        jVec3 pixelColor;
         jVec3 atten(0,0,0);
         float cosTheta = 0;
         Ray refractRay;
@@ -171,7 +165,7 @@ jVec3 RayTracer::reflectRefract(Ray& ray, HitRecord& hitRecord,int depth,
         float dn = ray.dir*surfaceNormal;
         if( dn < 0){
             // inside to outside
-            ray.refract(hitPoint,ray.dir,surfaceNormal,ray.refractIndex,1.0f,&refractRay);
+            ray.refract(hitPoint,ray.dir,surfaceNormal,ray.refractIndex,1.01f,&refractRay);
             refractRay.refractIndex = 1.0f;
             cosTheta = -dn;
             atten.setValues(1,1,1);
@@ -183,11 +177,12 @@ jVec3 RayTracer::reflectRefract(Ray& ray, HitRecord& hitRecord,int depth,
             atten[2] = exp(-material.refractionAttenuation[2]*dist);
 
             jVec3 neg_surfaceNormal = -surfaceNormal;
-            bool tir = ray.refract(hitPoint,ray.dir,neg_surfaceNormal,ray.refractIndex,material.refractionIndex,&refractRay);
+            // bool tir = ray.refract(hitPoint,ray.dir,neg_surfaceNormal,ray.refractIndex,material.refractionIndex,&refractRay);
+            bool tir = ray.refract(hitPoint,ray.dir,neg_surfaceNormal,1.01f,material.refractionIndex,&refractRay);
             refractRay.refractIndex = material.refractionIndex;
             if(tir){
                 // total internal reflection; therefore return only the reflected component
-                return material.reflection*reflectColor;
+                return atten.outerProduct(reflectColor);
             }else{
                 cosTheta = -refractRay.dir*surfaceNormal;
             }
@@ -197,9 +192,10 @@ jVec3 RayTracer::reflectRefract(Ray& ray, HitRecord& hitRecord,int depth,
         jVec3 reflectWeight = R*reflectColor;
         jVec3 refractWeight = (1-R)*trace(refractRay,depth-1);
         pixelColor += atten.outerProduct(reflectWeight + refractWeight);
+        return pixelColor;
+    }else{
+        return reflectColor;
     }
-
-    return pixelColor;
 }
 
 // jVec3 RayTracer::refract(Ray& ray,HitRecord& hitRecord,Material& material,jVec3& hitPoint,
@@ -246,7 +242,8 @@ jVec3 RayTracer::reflectRefract(Ray& ray, HitRecord& hitRecord,int depth,
 // }
 
 float RayTracer::getSchlickApproximation(float refractionIndex,float cos_theta){
-    float R0 = (refractionIndex - 1)*(refractionIndex - 1)/(refractionIndex+1)*(refractionIndex+1);
+    float R0 = (refractionIndex - 1)/(refractionIndex+1);
+    R0 = R0*R0;
     float power = (1-cos_theta)*(1-cos_theta);
     power *= power;
     power *= (1-cos_theta);

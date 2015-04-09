@@ -18,6 +18,7 @@ public:
     std::vector<LightSource*> lights;
 
     void flatten();
+    void reload();
 
 protected:
     void setupWorld();
