@@ -13,6 +13,8 @@
 WorldModel::WorldModel(){
     // setup the camera
     camera.pos = jVec3(9.85341,21.2548,23.5946);
+    // camera.pos = jVec3(0.315971,1.31239,-0.0163554);
+
     camera.at = jVec3(0,0,0);
     camera.dir = (camera.at - camera.pos).normalize();
     camera.focalLength = 1500;
@@ -153,7 +155,7 @@ void WorldModel::setupWorld()
             n->sceneObject->material = matFact.get("GLASS");
             n->localTransform.toidentity();
             n->localTransform.scale(2,2,2);
-            n->localTransform.translate(0,3.1,0);
+            n->localTransform.translate(0,3.1,7);
             root->addChild(n);
 
             n = new SceneNode();
@@ -162,9 +164,8 @@ void WorldModel::setupWorld()
             n->sceneObject->material = matFact.get("GLASS");
             n->localTransform.toidentity();
             n->localTransform.scale(2,2,2);
-            n->localTransform.translate(5,3.1,5);
+            n->localTransform.translate(0,3.1,-7);
             root->addChild(n);
-
 
             n = new SceneNode();
             n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
@@ -174,7 +175,8 @@ void WorldModel::setupWorld()
             root->addChild(n);
 
             n = new SceneNode();
-            n->sceneObject = new LightSource(new PrimitiveSphere(jVec3(0,0,0),0.1),1.0f);
+            // n->sceneObject = new LightSource(new PrimitiveSphere(jVec3(0,0,0),0.1),1.0f);
+            n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,-1,0),jVec3(1,-1,0),jVec3(1,1,0),jVec3(-1,1,0)),1.0f);
             n->sceneObject->isLight = true;
             n->sceneObject->material = matFact.get("WHITELIGHT");
             n->localTransform.translate(0,10,2);

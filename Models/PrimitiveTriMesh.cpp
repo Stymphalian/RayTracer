@@ -137,14 +137,26 @@ bool PrimitiveTriMesh::_intersects(Ray& ray,HitRecord& hit,jMat4& transform, int
 
     gamma = ((ray.dir[2] * ak_jb) + (ray.dir[1] * jc_al) + (ray.dir[0] * bl_kc)) / M;
 
-    if (gamma < 0 || gamma > 1)
-    {
+    if( gamma < 0 && !very_close(gamma,0,EPSILON)){
         return false;
     }
+    if( gamma > 1 && !very_close(gamma,1,EPSILON)){
+        return false;
+    }
+    // if (gamma < 0 || gamma > 1)
+    // {
+    //     return false;
+    // }
 
     beta = ((j * ei_hf) + (k * gf_di) + (l * dh_eg)) / M;
-    if (beta < 0 || beta > (1 - gamma))
-    {
+    // if (beta < 0 || beta > (1 - gamma))
+    // {
+    //     return false;
+    // }
+    if( beta < 0 && !very_close(beta,0,EPSILON)){
+        return false;
+    }
+    if( beta > (1 - gamma) && !very_close(beta,1-gamma,EPSILON)){
         return false;
     }
 

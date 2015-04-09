@@ -24,6 +24,7 @@ public:
   float refractionIndex;
   jVec3 refractionAttenuation;
 
+  bool isTransparent();
   void set(jVec3 color,jVec3 ambient,jVec3 diffuse, jVec3 specular,
     float shininess,float reflection,
     float refraction,float refractionIndex,jVec3 refractionAttenuation);

@@ -42,3 +42,7 @@ void Material::set(jVec3 color,jVec3 ambient,jVec3 diffuse, jVec3 specular,
     this->refractionIndex = refractionIndex;
     this->refractionAttenuation = refractionAttenuation;
 }
+
+bool Material::isTransparent(){
+    return (refraction > 0.0f);
+}

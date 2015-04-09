@@ -13,9 +13,13 @@ RayTracer::RayTracer(): QObject(0),epsilon(0.001f){
     max_dist = 2000.0f;
     max_depth = 3;
     defaultRefractionIndex = 1.0f;
+
+    sum = 0;
+    count = 0;
 }
 RayTracer::~RayTracer(){
     //qDebug() << "destroying ray tracer " << thread()->currentThreadId();
+    qDebug() << sum << " " << count << " " << sum/count;
 }
 
 // void RayTracer::render(QImage& ca,SceneNode& s,std::vector<LightSource*>& l,Camera& cam){
@@ -113,8 +117,10 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
         Ray new_ray;
         new_ray.origin = hitPoint;
         new_ray.dir = light_ray;
+
         HitRecord hitRecord = scene->queryScene(new_ray,min_dist + 0.01f,max_dist);
-        if( hitRecord.hit == false || hitRecord.hitObject == light){
+        if( isInShadow(hitRecord,*light,new_ray) == false){
+        //if( hitRecord.hit == false || hitRecord.hitObject == light){
             // diffuse = I * K * (N*L)
             pixelColor += light->intensity*matcolor.outerProduct(material.diffuse)*fmax(light_ray*surfaceNormal,0);
 
@@ -126,11 +132,11 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
     }
 
     // reflection + refraction
-    jVec3 reflectRefractColor(0,0,0);
-    if( material.reflection > 0.0f || material.refraction > 0.0f){
-        reflectRefractColor = reflectRefract(ray,hit,depth,surfaceNormal,material,hitPoint);
-    }
-    pixelColor += reflectRefractColor;
+   jVec3 reflectRefractColor(0,0,0);
+   if( material.reflection > 0.0f || material.refraction > 0.0f){
+       reflectRefractColor = reflectRefract(ray,hit,depth,surfaceNormal,material,hitPoint);
+   }
+   pixelColor += reflectRefractColor;
 
     // reflection
     // jVec3 reflectColor(0,0,0);
@@ -198,48 +204,6 @@ jVec3 RayTracer::reflectRefract(Ray& ray, HitRecord& hitRecord,int depth,
     }
 }
 
-// jVec3 RayTracer::refract(Ray& ray,HitRecord& hitRecord,Material& material,jVec3& hitPoint,
-//         jVec3& normal, float refractionIndex,int depth)
-// {
-//     if( material.refraction <= 0.0f ){
-//         return jVec3(0,0,0);
-//     }
-
-//     Ray refract_ray;
-//     float cos_theta;
-//     jVec3 transparency(0,0,0);
-//     float new_refraction_index = 0.0;
-
-//     if( ray.dir*normal < 0.0f){
-//         // outside
-//         bool rs = ray.refract(hitPoint,ray.dir, normal,refractionIndex,
-//             material.refractionIndex,&refract_ray);
-//         assert(rs == true);
-//         cos_theta = -ray.dir*normal;
-//         transparency = jVec3(1,1,1);
-//         new_refraction_index = material.refractionIndex;
-
-//     }else{
-//         // inside
-//         float dist = (ray.origin - hitPoint).length();
-//         transparency[0] = exp(material.refractionAttenuation[0]*dist);
-//         transparency[1] = exp(material.refractionAttenuation[1]*dist);
-//         transparency[2] = exp(material.refractionAttenuation[2]*dist);
-
-//         // FUCKING HACKED,the outgoing refaraction index
-//         bool rs = ray.refract(hitPoint,ray.dir, normal,refractionIndex,1.0f,&refract_ray);
-//         if( rs ){
-//             cos_theta =  refract_ray.dir*normal;
-//             new_refraction_index = 1.0f;
-//         }else{
-//             // total internal reflection
-//             return transparency*trace(ray,1.0f,depth-1);
-//         }
-//     }
-
-//     float R = getSchlickApproximation(refractionIndex,cos_theta);
-//     return transparency*(1-R)*trace(refract_ray,new_refraction_index,depth-1);
-// }
 
 float RayTracer::getSchlickApproximation(float refractionIndex,float cos_theta){
     float R0 = (refractionIndex - 1)/(refractionIndex+1);
@@ -250,3 +214,31 @@ float RayTracer::getSchlickApproximation(float refractionIndex,float cos_theta){
     return R0 + (1-R0)*power;
 }
 
+
+bool RayTracer::isInShadow(HitRecord& hit,LightSource& light,Ray& ray)
+{
+    // didn't hit any object, not even the light...
+    if(hit.hit == false){return true;}
+
+    // hit an object, but it was the light.
+    if(hit.hitObject == &light){
+        if( light.isDirectional()){
+
+            jVec3 hitPoint = ray.getPoint(hit.dist);
+            jVec3 surfaceNormal = hit.hitObject->getNormal(hitPoint, hit.transform, hit);
+            jVec3 viewVector = (ray.origin - hitPoint).normalize();
+
+            // directional light,therefore make sure we hit the right side.
+            float dn = viewVector*surfaceNormal;
+
+            // if dn <  0 then we hit the wrongside; therefore we are in shadow
+            return (dn < 0.0);
+        }else{
+            // not directional, so definitly not in shadow
+            return false;
+        }
+    }
+
+    // no other choice, we are blocked from the light source.
+    return true;
+}

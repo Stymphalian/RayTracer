@@ -8,6 +8,7 @@ public:
     int light_num;
     float intensity;
     Primitive* wrapped;
+    // bool isDirectional;
 
 
     // methods
@@ -19,6 +20,7 @@ public:
     // LightSource methods
     jVec3 getDirection(jVec3& hitPoint);
     jVec3 getEmmitance();
+    bool isDirectional();
 
     // from Primitive
     virtual void draw(jMat4& transform);
@@ -27,6 +29,8 @@ public:
     virtual jVec3 getOrigin();
     virtual void flatten(jMat4& transform);
     virtual LightSource* clone() const;
+
+
 };
 
 #endif

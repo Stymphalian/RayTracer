@@ -35,6 +35,7 @@ LightSource::LightSource(Primitive* wrapped, float intensity) : Primitive(){
         }
     }
 
+    // isDirectional = true;
 }
 
 LightSource::LightSource(const LightSource& other): Primitive(other),
@@ -42,6 +43,9 @@ LightSource::LightSource(const LightSource& other): Primitive(other),
     light_num(other.light_num)
 {
     wrapped = other.wrapped->clone();
+    light_num = other.light_num;
+    intensity = other.intensity;
+    // isDirectional = other.isDirectional;
 }
 
 
@@ -103,5 +107,9 @@ void LightSource::flatten(jMat4& transform){
 
 LightSource* LightSource::clone() const{
     return new LightSource(*this);
+}
+
+bool LightSource::isDirectional(){
+    return true;
 }
 
