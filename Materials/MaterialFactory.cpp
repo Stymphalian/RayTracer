@@ -4,7 +4,7 @@
 #include "../Utils/MaterialFileReader.h"
 #include "Material.h"
 
-static const char* MATERIALS_FILENAME = "materials.csv";
+static const char* MATERIALS_FILENAME = "data/materials.csv";
 
 MaterialFactory::MaterialFactory(){
     refresh();

@@ -11,6 +11,9 @@ public:
     jVec3 v;
     jVec3 w;
 
+    //The refractionIndex of the current ray.
+    float refractIndex;
+
     Ray();
     Ray(jVec3 origin, jVec3 dir);
 

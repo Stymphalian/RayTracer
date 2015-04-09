@@ -25,8 +25,8 @@ public:
 
     int id;
     // actual calls that do the work
-    jVec3 trace(Ray& ray, float refractionIndex,int depth);
-    jVec3 shade(Ray& ray, HitRecord& hit,float refractionIndex,int depth);
+    jVec3 trace(Ray& ray,int depth);
+    jVec3 shade(Ray& ray, HitRecord& hit,int depth);
 
 public slots:
     void render(int id,QImage* canvas,WorldModel* model,int start_row,int end_row);
@@ -50,8 +50,10 @@ protected:
     float max_dist;
     const float epsilon;
 
-    jVec3 refract(Ray& ray,HitRecord& hitRecord,Material& material,jVec3& hitPoint,
-        jVec3& normal, float refractionIndex,int depth);
+    jVec3 reflectRefract(Ray& ray, HitRecord& hitRecord,int depth,
+            jVec3& surfaceNormal,Material& hitMaterial,jVec3& hitPoint);
+    // jVec3 refract(Ray& ray,HitRecord& hitRecord,Material& material,jVec3& hitPoint,
+    //     jVec3& normal, float refractionIndex,int depth);
     float getSchlickApproximation(float refractionIndex,float cos_theta);
 };
 

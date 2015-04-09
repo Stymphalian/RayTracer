@@ -3,10 +3,13 @@
 #include "Models/Primitive.h"
 #include "Ray.h"
 
-Ray::Ray(){}
+Ray::Ray(){
+    this->refractIndex = 1.0f;
+}
 Ray::Ray(jVec3 origin, jVec3 dir){
     this->origin = origin;
     this->dir = dir;
+    this->refractIndex = 1.0f;
 }
 
 void Ray::calcRay(double renderWidth, double renderHeight, double col, double row,
@@ -46,20 +49,19 @@ Ray Ray::reflect(jVec3& origin,jVec3& normal){
     return r;
 }
 
-// return false if there is total internal reflection
+// return true if there is total internal reflection
 // true otherwise, and the desired output ray is placed into
 // the outputRay variable.
 // output_dir = (n/n_t)*(d - n(d*n)) - n*sqrt(1 - (n^2/n_t^2)(1- (d*n)^2))
 bool Ray::refract(jVec3& origin, jVec3& incomingDir,jVec3& normal,
     float inRefractionIndex, float outRefractionIndex,
     Ray* outputRay)
-{
-
+{    
     float dn = incomingDir*normal;
     float ratio = inRefractionIndex/outRefractionIndex;
     float descriminant = 1 - ratio*ratio*(1-dn*dn);
     if( descriminant < 0){
-        return false;
+        return true;
     }
 
     outputRay->origin = origin;
@@ -67,5 +69,5 @@ bool Ray::refract(jVec3& origin, jVec3& incomingDir,jVec3& normal,
     jVec3 p = ratio*(incomingDir - normal*dn);
     outputRay->dir = p - normal*sqrt(descriminant);
     outputRay->dir.normalize();
-    return true;
+    return false;
 }
