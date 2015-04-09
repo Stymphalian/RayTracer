@@ -41,6 +41,11 @@ bool PrimitiveTriMesh::intersectsBoundingBox(Ray& ray){
 }
 
 void  PrimitiveTriMesh::draw(jMat4& transform){
+    if( hasBoundingBox()){
+        _getBoundingBox().draw(transform);
+    }
+
+
     GLboolean status;
     glGetBooleanv(GL_LIGHTING,&status);
     if(status){
@@ -238,7 +243,7 @@ AABB PrimitiveTriMesh::_getBoundingBox()
         if( this->vertex_pool[i][1] < min_y){
             min_y = this->vertex_pool[i][1];
         }
-        if( this->vertex_pool[i][2] < min_y){
+        if( this->vertex_pool[i][2] < min_z){
             min_z = this->vertex_pool[i][2];
         }
 
@@ -248,7 +253,7 @@ AABB PrimitiveTriMesh::_getBoundingBox()
         if( this->vertex_pool[i][1] > max_y){
             max_y = this->vertex_pool[i][1];
         }
-        if( this->vertex_pool[i][2] > max_y){
+        if( this->vertex_pool[i][2] > max_z){
             max_z = this->vertex_pool[i][2];
         }
     }

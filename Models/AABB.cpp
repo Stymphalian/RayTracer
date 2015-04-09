@@ -51,3 +51,51 @@ bool AABB::intersects(Ray& r){
     t = tmin;
     return true;
 }
+
+
+void AABB::draw(jMat4& transform){
+
+    jVec3 lb = this->lb*transform;
+    jVec3 rt = this->rt*transform;
+    glBegin(GL_LINES);
+        // bottom
+        glVertex3f(lb[0],lb[1],lb[2]);
+        glVertex3f(rt[0],lb[1],lb[2]);
+
+        glVertex3f(rt[0],lb[1],lb[2]);
+        glVertex3f(rt[0],lb[1],rt[2]);
+
+        glVertex3f(rt[0],lb[1],rt[2]);
+        glVertex3f(lb[0],lb[1],rt[2]);
+
+        glVertex3f(lb[0],lb[1],rt[2]);
+        glVertex3f(lb[0],lb[1],lb[2]);
+
+        // middle
+        glVertex3f(lb[0],lb[1],lb[2]);
+        glVertex3f(lb[0],rt[1],lb[2]);
+
+        glVertex3f(rt[0],lb[1],lb[2]);
+        glVertex3f(rt[0],rt[1],lb[2]);
+
+        glVertex3f(rt[0],lb[1],rt[2]);
+        glVertex3f(rt[0],rt[1],rt[2]);
+
+        glVertex3f(lb[0],lb[1],rt[2]);
+        glVertex3f(lb[0],rt[1],rt[2]);
+
+        // top
+        glVertex3f(lb[0],rt[1],lb[2]);
+        glVertex3f(rt[0],rt[1],lb[2]);
+
+        glVertex3f(rt[0],rt[1],lb[2]);
+        glVertex3f(rt[0],rt[1],rt[2]);
+
+        glVertex3f(rt[0],rt[1],rt[2]);
+        glVertex3f(lb[0],rt[1],rt[2]);
+
+        glVertex3f(lb[0],rt[1],rt[2]);
+        glVertex3f(lb[0],rt[1],lb[2]);
+
+    glEnd();
+}

@@ -14,6 +14,7 @@ public:
     virtual ~AABB();
 
     virtual bool intersects(Ray& ray);
+    virtual void draw(jMat4& transform);
 };
 
 #endif
