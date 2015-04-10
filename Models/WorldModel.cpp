@@ -9,8 +9,12 @@
 #include "PrimitivePlane.h"
 #include "Materials/MaterialFactory.h"
 #include "Utils/ObjFileReader.h"
+#include "Utils/jRand.h"
 
 WorldModel::WorldModel(){
+    jRand& jrand = jRand::getInstance();
+    jrand.init(400);
+
     // setup the camera
     camera.pos = jVec3(9.85341,21.2548,23.5946);
     // camera.pos = jVec3(0.315971,1.31239,-0.0163554);
@@ -169,14 +173,14 @@ void WorldModel::setupWorld()
         // root->addChild(n);
 
 
-            n = new SceneNode();
-            // n->sceneObject = new PrimitiveCube(jVec3(-1,-1,1),jVec3(1,1,-1));
-            n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1.0f);
-            n->sceneObject->material = matFact.get("GLASS");
-            n->localTransform.toidentity();
-            n->localTransform.scale(2,2,2);
-            n->localTransform.translate(0,3.1,7);
-            root->addChild(n);
+            // n = new SceneNode();
+            // // n->sceneObject = new PrimitiveCube(jVec3(-1,-1,1),jVec3(1,1,-1));
+            // n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1.0f);
+            // n->sceneObject->material = matFact.get("GLASS");
+            // n->localTransform.toidentity();
+            // n->localTransform.scale(2,2,2);
+            // n->localTransform.translate(0,3.1,7);
+            // root->addChild(n);
 
             n = new SceneNode();
             // n->sceneObject = new PrimitiveCube(jVec3(-1,-1,1),jVec3(1,1,-1));
@@ -184,7 +188,8 @@ void WorldModel::setupWorld()
             n->sceneObject->material = matFact.get("GLASS");
             n->localTransform.toidentity();
             n->localTransform.scale(2,2,2);
-            n->localTransform.translate(0,3.1,-7);
+            // n->localTransform.translate(0,3.1,-7);
+            n->localTransform.translate(0,0,0);
             root->addChild(n);
 
             n = new SceneNode();
@@ -196,21 +201,22 @@ void WorldModel::setupWorld()
 
             n = new SceneNode();
             // n->sceneObject = new LightSource(new PrimitiveSphere(jVec3(0,0,0),0.1),1.0f);
-            // n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,-1,0),jVec3(1,-1,0),jVec3(1,1,0),jVec3(-1,1,0)),1.0f);
+            n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,-1,0),jVec3(1,-1,0),jVec3(1,1,0),jVec3(-1,1,0)),1.0f);
             // n->sceneObject = new LightSource(createLightMesh(),1.0f);
-            n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,0,-1),jVec3(0,0,0),jVec3(0,1,0),jVec3(-1,1,-1)),1.0f);
+            // n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,0,-1),jVec3(0,0,0),jVec3(0,1,0),jVec3(-1,1,-1)),1.0f);
             n->sceneObject->isLight = true;
             n->sceneObject->material = matFact.get("WHITELIGHT");
-            n->localTransform.translate(0,2,2);
+            // n->localTransform.translate(0,2,2);
+            n->localTransform.translate(0,4,-4);
             root->addChild(n);
 
-            n = new SceneNode();
-            // n->sceneObject = new LightSource(new PrimitivePlane(jVec3(1,0,-1),jVec3(0,0,0),jVec3(0,1,0),jVec3(1,1,-1)),1.0f);
-            n->sceneObject = new LightSource(new PrimitivePlane(jVec3(0,0,0),jVec3(1,0,-1),jVec3(1,1,-1),jVec3(0,1,0)),1.0f);
-            n->sceneObject->isLight = true;
-            n->sceneObject->material = matFact.get("WHITELIGHT");
-            n->localTransform.translate(0,2,2);
-            root->addChild(n);
+            // n = new SceneNode();
+            // // n->sceneObject = new LightSource(new PrimitivePlane(jVec3(1,0,-1),jVec3(0,0,0),jVec3(0,1,0),jVec3(1,1,-1)),1.0f);
+            // n->sceneObject = new LightSource(new PrimitivePlane(jVec3(0,0,0),jVec3(1,0,-1),jVec3(1,1,-1),jVec3(0,1,0)),1.0f);
+            // n->sceneObject->isLight = true;
+            // n->sceneObject->material = matFact.get("WHITELIGHT");
+            // n->localTransform.translate(0,2,2);
+            // root->addChild(n);
 }
 
 

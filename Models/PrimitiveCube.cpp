@@ -29,6 +29,7 @@ PrimitiveCube::PrimitiveCube(jVec3 min, jVec3 max): PrimitiveTriMesh(){
     vertex_indices.push_back(jVec3(5,4,0));
 
     has_bounding_box = false;
+    boundingbox = _getBoundingBox();
 }
 PrimitiveCube::PrimitiveCube(const PrimitiveCube& other): PrimitiveTriMesh(other){
     min = other.min;

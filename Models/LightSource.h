@@ -8,7 +8,6 @@ public:
     int light_num;
     float intensity;
     Primitive* wrapped;
-    // bool isDirectional;
 
 
     // methods
@@ -22,6 +21,11 @@ public:
     jVec3 getEmmitance();
     bool isDirectional();
 
+
+    bool isAreaLightSource();
+    jVec3 getSamplePoint(int i);
+    std::vector<jVec3> sample_points;
+
     // from Primitive
     virtual void draw(jMat4& transform);
     virtual bool intersects(Ray& ray,HitRecord& rs, jMat4& transform);
@@ -29,7 +33,6 @@ public:
     virtual jVec3 getOrigin();
     virtual void flatten(jMat4& transform);
     virtual LightSource* clone() const;
-
 
 };
 

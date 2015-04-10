@@ -15,9 +15,11 @@ RayTracer::RayTracer(): QObject(0),epsilon(0.001f){
     max_depth = 3;
     defaultRefractionIndex = 1.0f;
 
-    enableJitterSampling= true;
+    jitterSamplingEnabled = true;
     numberJitterRows = 4;
     numberJitterCols = 4;
+    softShadowsEnabled = true;
+    numSoftShadowSamples = 16;
 }
 RayTracer::~RayTracer(){
     //qDebug() << "destroying ray tracer " << thread()->currentThreadId();
@@ -47,7 +49,7 @@ void RayTracer::render(int id,QImage* ca,WorldModel* model,int start_row,int end
 // loop through each pixel
     for (int row = start_row; row <= end_row; ++row){
         for(int col = 0; col < renderWidth; ++col){
-            if( enableJitterSampling == false){
+            if( jitterSamplingEnabled == false){
                 ray.calcRay(renderWidth,renderHeight,col,renderHeight - row,camera->pos,camera->focalLength);
                 ray.dir.normalize();
                 ray.refractIndex= defaultRefractionIndex;
@@ -56,7 +58,8 @@ void RayTracer::render(int id,QImage* ca,WorldModel* model,int start_row,int end
                 // set the pixel color
                 canvas->setPixel(col,row,qRgb(pixelColor[0]*255,pixelColor[1]*255,pixelColor[2]*255));
             }else{
-                // jitter for 16 samples
+
+                // jitter for 16 samples; for antialiasing effects.
                 pixelColor = jVec3(0,0,0);
                 for(int p = 0; p < numberJitterCols; ++p){
                     for(int q = 0; q< numberJitterRows; ++q){
@@ -111,6 +114,7 @@ jVec3 RayTracer::trace(Ray& ray,int depth){
     return pixelColor;
 }
 
+
 jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
     // the hitRecord at this point contains
     // hit // dist // min_dist // max_dist // hitObject // transform
@@ -119,6 +123,7 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
     // determine if the light ray will intersect with the surface point
     // if it does, then calculate shade
 
+    jRand& jrand = jRand::getInstance();
     jVec3 hitPoint = ray.getPoint(hit.dist);
     jVec3 surfaceNormal = hit.hitObject->getNormal(hitPoint, hit.transform, hit);
     jVec3 viewVector = (ray.origin - hitPoint).normalize();
@@ -129,9 +134,6 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
     std::vector<LightSource*>::iterator it;
     for(it = lights->begin(); it != lights->end(); ++it){
         LightSource* light = *it;
-        jVec3 light_ray = light->getDirection(hitPoint).normalize();
-        jVec3 r = 2*(light_ray*surfaceNormal)*surfaceNormal - light_ray;
-
         jVec3 matcolor = material.color.outerProduct(light->getEmmitance());
 
         // ambient  = I * K
@@ -140,19 +142,38 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
         // Check if we are in shadow
         Ray new_ray;
         new_ray.origin = hitPoint;
-        new_ray.dir = light_ray;
+        jVec3 light_ray;
 
-        HitRecord hitRecord = scene->queryScene(new_ray,min_dist + 0.01f,max_dist);
-        if( isInShadow(hitRecord,*light,new_ray) == false){
-        //if( hitRecord.hit == false || hitRecord.hitObject == light){
-            // diffuse = I * K * (N*L)
-            pixelColor += light->intensity*matcolor.outerProduct(material.diffuse)*fmax(light_ray*surfaceNormal,0);
+        //int n = (softShadowsEnabled) ? numSoftShadownSamples : 1;
+        int n = (softShadowsEnabled) ?  36 : 1;
 
-            // specular =  I * K * (N * R)^p
-            float spec = pow(fmax(0,viewVector*r),material.shininess);
-            pixelColor += light->intensity*matcolor.outerProduct(material.specular)*spec;
+        jVec3 shadowColor(0,0,0);
+
+        for(int i = 0; i< n; ++i){
+            jVec3 light_hit_point = light->getSamplePoint(i);
+            jVec3 origin_hitPoint = jVec3(hitPoint[0] + jrand()/6, hitPoint[1] + jrand()/6, hitPoint[2] + jrand()/6);
+            // jVec3 light_hit_point = light->getOrigin();
+            jVec3 light_ray = (light_hit_point - origin_hitPoint).normalize();
+
+            new_ray.origin = origin_hitPoint;
+            new_ray.dir = light_ray;
+            HitRecord shadowHit = scene->queryScene(new_ray,min_dist + 0.01f, max_dist);
+            if( isInShadow(shadowHit,*light,new_ray) == false){
+                // diffuse = I * K * (N*L)
+                shadowColor += light->intensity*matcolor.outerProduct(material.diffuse)*fmax(light_ray*surfaceNormal,0);
+
+                // specular =  I * K * (N * R)^p
+                jVec3 reflectVector = 2*(light_ray*surfaceNormal)*surfaceNormal - light_ray;
+                float spec = pow(fmax(0,viewVector*reflectVector),material.shininess);
+                shadowColor += light->intensity*matcolor.outerProduct(material.specular)*spec;
+            }
         }
 
+        // average out the shadow colour samples
+        shadowColor = shadowColor/n;
+
+        // output to the final pixel color
+        pixelColor += shadowColor;
     }
 
     // reflection + refraction
@@ -242,7 +263,7 @@ float RayTracer::getSchlickApproximation(float refractionIndex,float cos_theta){
 bool RayTracer::isInShadow(HitRecord& hit,LightSource& light,Ray& ray)
 {
     // didn't hit any object, not even the light...
-    if(hit.hit == false){return false;}
+    if(hit.hit == false){return true;}
 
     // hit an object, but it was the light.
     if(hit.hitObject == &light){

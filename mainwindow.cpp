@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // initialize the rng with 400 numbers.
     jRand& jrand = jRand::getInstance();
     jrand.init(400);
 
@@ -67,3 +68,23 @@ void MainWindow::refreshMaterials(){
   MaterialFactory::getInstance().refresh();
   model.reload();
 }
+
+
+/*
+TODO:
+    soft-shadows
+    ray-cast selection
+    material drop downs
+
+    room-like area + reflective sphere
+    find a good .obj file
+    benchmark performance
+
+FIXES:
+    weird perspective issue between ray-traced viewport + opengl viewport.
+    Refractions are highly broken with everything but a sphere.
+    Code size is enormous
+    documentation.
+    make sure it complies on the lab machines.
+
+*/

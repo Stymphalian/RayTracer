@@ -1,6 +1,8 @@
 #include "LightSource.h"
 #include "Primitive.h"
+#include "PrimitiveTriMesh.h"
 #include "RayTracer/HitRecord.h"
+#include "Utils/jRand.h"
 #include <QtOpenGL>
 
 static GLenum light_enums[] ={
@@ -35,7 +37,21 @@ LightSource::LightSource(Primitive* wrapped, float intensity) : Primitive(){
         }
     }
 
-    // isDirectional = true;
+    if( isAreaLightSource()){
+        jRand& jrand = jRand::getInstance();
+        PrimitiveTriMesh* m = (PrimitiveTriMesh*)this->wrapped;
+        jVec3 c = m->vertex_pool[0];
+        jVec3 a = (m->vertex_pool[1] - c)/6;
+        jVec3 b = (m->vertex_pool[3] - c)/6;
+        jVec3 v;
+        sample_points.clear();
+        for(float row = 0; row < 6; ++row){
+            for(float col = 0; col < 6; ++col){
+                v = c + (col+jrand())*a + (row+jrand())*b;
+                sample_points.push_back(v);
+            }
+        }
+    }
 }
 
 LightSource::LightSource(const LightSource& other): Primitive(other),
@@ -45,7 +61,8 @@ LightSource::LightSource(const LightSource& other): Primitive(other),
     wrapped = other.wrapped->clone();
     light_num = other.light_num;
     intensity = other.intensity;
-    // isDirectional = other.isDirectional;
+
+    sample_points = other.sample_points;
 }
 
 
@@ -97,12 +114,17 @@ jVec3 LightSource::getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit){
     return this->wrapped->getNormal(hitPoint,transform,hit);
     //return this->wrapped->getNormal(hitPoint,transform,hit);
 }
+
 jVec3 LightSource::getOrigin(){
     return this->wrapped->getOrigin();
 }
 void LightSource::flatten(jMat4& transform){
     this->isFlat = true;
     this->wrapped->flatten(transform);
+
+    for(int i = 0; i < (int) sample_points.size(); ++i){
+        sample_points[i] = sample_points[i]*transform;
+    }
 }
 
 LightSource* LightSource::clone() const{
@@ -112,4 +134,13 @@ LightSource* LightSource::clone() const{
 bool LightSource::isDirectional(){
     return true;
 }
+
+bool LightSource::isAreaLightSource(){
+    return true;
+}
+
+jVec3 LightSource::getSamplePoint(int index){
+    return sample_points[index];
+}
+
 

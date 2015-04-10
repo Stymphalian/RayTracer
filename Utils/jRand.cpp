@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <limits.h>
 #include <vector>
+#include <ctime>
 #include "jRand.h"
 
 jRand& jRand::getInstance(){
@@ -12,6 +13,7 @@ void jRand::init(int num_rands){
     _rands.clear();
     _rands.resize(num_rands);
 
+    srand(time(NULL));
     for(int i =0 ;i < num_rands; ++i){
         _rands[i] = gen_rand();
     }
@@ -24,5 +26,5 @@ double jRand::operator()(){
 }
 
 double jRand::gen_rand(){
-    return rand()/(double)INT_MAX;
+    return rand()/(double)RAND_MAX;
 }

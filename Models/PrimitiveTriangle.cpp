@@ -13,6 +13,7 @@ PrimitiveTriangle::PrimitiveTriangle(){
 PrimitiveTriangle::PrimitiveTriangle(jVec3 p1,jVec3 p2, jVec3 p3):PrimitiveTriMesh(){
     setPoints(p1,p2,p3);
     has_bounding_box = false;
+    boundingbox = _getBoundingBox();
 }
 PrimitiveTriangle::PrimitiveTriangle(const PrimitiveTriangle& other): PrimitiveTriMesh(other)
 {}

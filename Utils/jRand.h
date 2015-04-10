@@ -9,10 +9,9 @@ public:
 
     void init(int num_rands);
     double operator()();
-
-protected:
     double gen_rand();
 
+protected:
     std::vector<double> _rands;
     int _count;
 

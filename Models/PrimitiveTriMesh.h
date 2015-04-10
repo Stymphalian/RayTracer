@@ -27,6 +27,7 @@ public:
     virtual void draw(jMat4& transform);
     virtual bool intersects(Ray& ray,HitRecord& rs, jMat4& transform);
     virtual jVec3 getNormal(jVec3& hitPoint,jMat4& transform,HitRecord hit);
+    // virtual jVec3 getSamplePoint(int index, int rows,int cols,int depth);
     virtual jVec3 getOrigin();
     virtual void flatten(jMat4& transform);
     virtual PrimitiveTriMesh* clone() const;
@@ -36,6 +37,7 @@ public:
     virtual bool intersectsBoundingBox(Ray& ray);
 
     void fillTriMeshFromObjFile(ObjFileReader::Obj_Model& model);
+
 protected:
     bool  _intersects(Ray& ray,HitRecord& rs, jMat4& transform,int index);
     jVec3 _getNormal(jMat4& transform,int hitIndex);

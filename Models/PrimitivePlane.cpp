@@ -12,6 +12,7 @@ PrimitivePlane::PrimitivePlane(jVec3 p1,jVec3 p2,jVec3 p3, jVec3 p4): PrimitiveT
     vertex_indices.push_back(jVec3(0,1,3));
     vertex_indices.push_back(jVec3(1,2,3));
     has_bounding_box = false;
+    boundingbox = _getBoundingBox();
 }
 PrimitivePlane::PrimitivePlane(const PrimitivePlane& other): PrimitiveTriMesh(other){
 

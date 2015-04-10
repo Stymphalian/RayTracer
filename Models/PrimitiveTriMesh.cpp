@@ -314,3 +314,28 @@ void  PrimitiveTriMesh::flatten(jMat4& transform){
 PrimitiveTriMesh* PrimitiveTriMesh::clone() const{
     return new PrimitiveTriMesh(*this);
 }
+
+// jVec3 PrimitiveTriMesh::getSamplePoint(int index, int rows,int cols, int depth){
+//     float bb_width  = (boundingbox.rt[0] - boundingbox.lb[0])/rows;
+//     float bb_height = (boundingbox.rt[1] - boundingbox.lb[1])/cols;
+//     float bb_depth  = (boundingbox.lb[2] - boundingbox.rt[2])/depth;
+
+//     int i;
+//     for(int d = 0; d < depth; ++d){
+//         for(int r = 0; r < rows; ++r){
+//             for(int c = 0; c< cols; ++c){
+//                 if(index == i ){
+//                     jVec3 v(
+//                         boundingbox.lb[0] + c*bb_width,
+//                         boundingbox.lb[1] + r*bb_height,
+//                         boundingbox.lb[2] - d*bb_depth);
+//                     return v;
+//                 }
+//                 i += 1;
+//             }
+//         }
+//     }
+
+//     jVec3 v(0,0,0);
+//     return v;
+// }

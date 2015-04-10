@@ -58,6 +58,7 @@ PrimitiveSphere::PrimitiveSphere(jVec3 pos, double radius) : PrimitiveTriMesh()
     }
 
     has_bounding_box = false;
+    boundingbox = _getBoundingBox();
 }
 
 PrimitiveSphere::PrimitiveSphere(const PrimitiveSphere& other) : PrimitiveTriMesh(other){

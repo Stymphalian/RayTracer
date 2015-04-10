@@ -48,9 +48,11 @@ protected:
     float min_dist;
     float max_dist;
     const float epsilon;
-    bool enableJitterSampling;
+    bool  jitterSamplingEnabled;
     int numberJitterRows;
     int numberJitterCols;
+    bool softShadowsEnabled;
+    int numSoftShadowSamples; // must be a sqrt-able number
 
     jVec3 reflectRefract(Ray& ray, HitRecord& hitRecord,int depth,
             jVec3& surfaceNormal,Material& hitMaterial,jVec3& hitPoint);
@@ -58,9 +60,6 @@ protected:
     //     jVec3& normal, float refractionIndex,int depth);
     float getSchlickApproximation(float refractionIndex,float cos_theta);
     bool isInShadow(HitRecord& hit,LightSource& light,Ray& ray);
-
-    float sum;
-    float count;
 };
 
 #endif
