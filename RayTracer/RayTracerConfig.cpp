@@ -2,7 +2,7 @@
 
 RayTracerConfig::RayTracerConfig(){
     // defalt configuration variables
-    this->max_depth = 3;
+    this->max_depth = 5;
     this->defaultRefractionIndex = 1.0f;
     this->min_dist = 0.001f;
     this->max_dist = 2000.0f;

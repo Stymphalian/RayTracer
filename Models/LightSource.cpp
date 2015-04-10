@@ -40,13 +40,11 @@ LightSource::LightSource(Primitive* wrapped, float intensity) : Primitive(){
     _is_area_light_source = false;
 }
 
-LightSource::LightSource(const LightSource& other): Primitive(other),
-    intensity(other.intensity),
-    light_num(other.light_num)
+LightSource::LightSource(const LightSource& other): Primitive(other)
 {
-    wrapped = other.wrapped->clone();
-    light_num = other.light_num;
     intensity = other.intensity;
+    light_num = other.light_num;
+    wrapped = other.wrapped->clone();    
 
     _sample_points = other._sample_points;
     _is_area_light_source = other._is_area_light_source;
@@ -85,14 +83,17 @@ void LightSource::draw(jMat4& transform){
 
     v2 = this->material.ambient.outerProduct(this->material.color);
     v2.toOpenGLFormat(vec);
+    this->material.ambient.toOpenGLFormat(vec);
     glLightfv(light_enums[light_num],GL_AMBIENT,vec);
 
     v2 = this->material.diffuse.outerProduct(this->material.color);
     v2.toOpenGLFormat(vec);
+    this->material.diffuse.toOpenGLFormat(vec);
     glLightfv(light_enums[light_num],GL_DIFFUSE,vec);
 
     v2 = this->material.specular.outerProduct(this->material.color);
     v2.toOpenGLFormat(vec);
+    this->material.specular.toOpenGLFormat(vec);
     glLightfv(light_enums[light_num],GL_SPECULAR,vec);
 
     this->wrapped->material = this->material;

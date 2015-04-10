@@ -21,7 +21,7 @@ GLWidget::GLWidget(QWidget *parent)
 
     model = NULL;
     progress_count = 0;
-    max_num_threads = 4;
+    max_num_threads = 8;
     num_running_threads =0;
     locked = false;
     processing_image = NULL;

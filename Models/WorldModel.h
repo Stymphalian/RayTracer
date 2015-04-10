@@ -28,7 +28,9 @@ protected:
     void _setupLights(std::vector<LightSource*>& lights, SceneNode* node);
 
     SceneNode* load_main_scene();
+    SceneNode* load_main_simple_scene();
     SceneNode* load_obj_scene();
+
 };
 
 #endif
