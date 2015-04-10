@@ -28,7 +28,7 @@ WorldModel::WorldModel(){
     // config
 
     root = NULL;
-    setupWorld();
+    setupWorld(0);
     setupLights();
 }
 
@@ -328,10 +328,12 @@ SceneNode* WorldModel::load_obj_scene()
     return root;
 }
 
-void WorldModel::setupWorld(){
-   root = load_main_simple_scene();
-   // root = load_main_scene();
-    // root = load_obj_scene();
+void WorldModel::setupWorld(int sceneNum){
+    switch(sceneNum){
+        case(0): root = load_main_simple_scene(); break;
+        case(1): root = load_main_scene(); break;
+        case(2): root = load_obj_scene(); break;
+    }
 }
 
 
@@ -370,11 +372,11 @@ void WorldModel::flatten()
     root->flatten(transform);
 }
 
-void WorldModel::reload(){
+void WorldModel::reload(int sceneNum){
     delete root;
     root = NULL;
     lights.clear();
 
-    setupWorld();
+    setupWorld(sceneNum);
     setupLights();
 }

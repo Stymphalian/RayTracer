@@ -20,17 +20,16 @@ public:
     std::vector<LightSource*> lights;
 
     void flatten();
-    void reload();
+    void reload(int sceneNum);
 
 protected:
-    void setupWorld();
+    void setupWorld(int sceneNum);
     void setupLights();
     void _setupLights(std::vector<LightSource*>& lights, SceneNode* node);
 
     SceneNode* load_main_scene();
     SceneNode* load_main_simple_scene();
     SceneNode* load_obj_scene();
-
 };
 
 #endif

@@ -16,6 +16,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    int sceneNum;
+
 protected:
     WorldModel model;
     void keyPressEvent(QKeyEvent *);
@@ -35,6 +37,8 @@ private slots:
     void handleRecursionDepth(int);
     void handleNumberThreads(int);
     void handleTimeTakenToRender(qint64);
+    void handleChooseScene(int);
+    void handleLoadScene();
 
 };
 

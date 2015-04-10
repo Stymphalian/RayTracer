@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->sceneNum = 0;
 
     // initialize the rng with 400 numbers.
     jRand& jrand = jRand::getInstance();
@@ -18,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //ObjFileReader reader;
     //reader.test();
     //reader.read("test.obj",&obj_model);
-
     // MaterialFileReader mat_reader;
     // mat_reader.test();
 
@@ -69,7 +69,7 @@ void MainWindow::ray_trace(bool)
 
 void MainWindow::refreshMaterials(){
   MaterialFactory::getInstance().refresh();
-  model.reload();
+  model.reload(sceneNum);
 }
 
 void MainWindow::uploadSettingsToGui(){
@@ -107,15 +107,18 @@ void MainWindow::handleTimeTakenToRender(qint64 value){
     ui->TimeTakenLineEdit->setText("Time Taken: " + QString::number(value) + " ms");
 }
 
-/*
-TODO:
-    benchmark performance
+void MainWindow::handleChooseScene(int v){
+    sceneNum = v;
+}
+void MainWindow::handleLoadScene(){
+    model.reload(sceneNum);
+}
 
+/*
 FIXES:
     weird perspective issue between ray-traced viewport + opengl viewport.
     Refractions are highly broken with everything but a sphere.
     Code size is enormous
     documentation.
     make sure it complies on the lab machines.
-
 */
