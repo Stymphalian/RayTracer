@@ -166,6 +166,10 @@ void GLWidget::makeImage( )
 
 
 void GLWidget::handle_started(){
+    if( num_running_threads == 0){
+        timer.restart();
+        timer.start();
+    }
     num_running_threads += 1;
     //qDebug() << "Handle started " << num_running_threads;
 }
@@ -175,6 +179,9 @@ void GLWidget::handle_finished(){
 //    qDebug() << "Handle finished "<< num_running_threads;
 
     if( num_running_threads == 0){
+        // emit how long it has taken to finish the full render
+        emit timeTakenToRender(timer.elapsed());
+
         // clean up all the threads + workers
         for(int i = 0 ;i < max_num_threads; ++i){
             threads[i] = NULL;
@@ -202,4 +209,11 @@ void GLWidget::handle_render_row_finished(){
     progress_count += 1;
     emit updateProgress(progress_count);
     //qDebug() << "Render Row Finished "<< progress_count;
+}
+
+void GLWidget::setMaxNumberThreads(int value){
+    max_num_threads = value;
+}
+int GLWidget::getMaxNumberThreads(){
+    return max_num_threads;
 }

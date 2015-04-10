@@ -24,8 +24,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionSave_As,SIGNAL(triggered(bool)),this,SLOT(save_as(bool)));
     connect(ui->actionBegin_Ray_Trace,SIGNAL(triggered(bool)),this,SLOT(ray_trace(bool)));
+    connect(ui->widget,SIGNAL(timeTakenToRender(qint64)),this,SLOT(handleTimeTakenToRender(qint64)));
     ui->widget->setModel(&model);
     ui->widget_2->setModel(&model);
+
     uploadSettingsToGui();
 }
 
@@ -76,6 +78,7 @@ void MainWindow::uploadSettingsToGui(){
     ui->softShadowsCheckBox->setChecked(model.config.softShadowsEnabled);
     ui->softShadowsComboBox->setCurrentIndex(sqrt(model.config.numSoftShadowSamples)-1);
     ui->maxDepthSpinBox->setValue(model.config.max_depth);
+    ui->numberThreadsSpinBox->setValue(ui->widget->getMaxNumberThreads());
 }
 
 void MainWindow::handleAntiAliasFlag(int i){
@@ -96,6 +99,13 @@ void MainWindow::handleRecursionDepth(int i){
     model.config.max_depth = i;
 }
 
+void MainWindow::handleNumberThreads(int value){
+    ui->widget->setMaxNumberThreads(value);
+}
+
+void MainWindow::handleTimeTakenToRender(qint64 value){
+    ui->TimeTakenLineEdit->setText("Time Taken: " + QString::number(value) + " ms");
+}
 
 /*
 TODO:

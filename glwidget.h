@@ -12,6 +12,7 @@
 #include <QProgressBar>
 #include <QtGui>
 #include <QtOpenGL>
+#include <QElapsedTimer>
 #include <math.h>
 
 #include "Models/WorldModel.h"
@@ -36,6 +37,8 @@ public:
     void setModel(WorldModel* model);
     void saveImage(QString fileBuf);
     void makeImage();
+    void setMaxNumberThreads(int value);
+    int getMaxNumberThreads();
 
 public slots:
     void handle_finished();
@@ -47,6 +50,7 @@ signals:
     void updateProgress(int val);
     void updateMaxProgress(int val);
     void render(int id,QImage* canvas,WorldModel* model,int start_row,int end_row);
+    void timeTakenToRender(qint64);
 
 protected:
     //Initialize the OpenGL Graphics Engine
@@ -83,7 +87,7 @@ private:
     bool locked;
     std::vector<QThread*> threads;
     std::vector<RayTracer*> tracers;
-
+    QElapsedTimer timer;
 };
 
 

@@ -33,6 +33,8 @@ private slots:
     void handleSoftShadowsNumber(int);
     void handleAntiAliasNumber(int);
     void handleRecursionDepth(int);
+    void handleNumberThreads(int);
+    void handleTimeTakenToRender(qint64);
 
 };
 

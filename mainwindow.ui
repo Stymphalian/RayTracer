@@ -180,6 +180,45 @@
      </property>
     </item>
    </widget>
+   <widget class="QSpinBox" name="numberThreadsSpinBox">
+    <property name="geometry">
+     <rect>
+      <x>1180</x>
+      <y>280</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>280</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Number Threads</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="TimeTakenLineEdit">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>540</y>
+      <width>181</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Time Taken:</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -379,6 +418,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>numberThreadsSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>handleNumberThreads(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1192</x>
+     <y>319</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1192</x>
+     <y>356</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>refreshMaterials()</slot>
@@ -387,5 +442,6 @@
   <slot>handleSoftShadowsFlag(int)</slot>
   <slot>handleAntiAliasNumber(int)</slot>
   <slot>handleSoftShadowsNumber(int)</slot>
+  <slot>handleNumberThreads(int)</slot>
  </slots>
 </ui>
