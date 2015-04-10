@@ -36,7 +36,8 @@ SOURCES += main.cpp\
     Utils/ObjFileReader.cpp \
     Models/AABB.cpp \
     Utils/MaterialFileReader.cpp \
-    Utils/jRand.cpp
+    Utils/jRand.cpp \
+    RayTracer/RayTracerConfig.cpp
 
 HEADERS  += mainwindow.h \
     glwidget.h \
@@ -61,6 +62,7 @@ HEADERS  += mainwindow.h \
     Utils/ObjFileReader.h \
     Models/AABB.h \
     Utils/MaterialFileReader.h \
-    Utils/jRand.h
+    Utils/jRand.h \
+    RayTracer/RayTracerConfig.h
 
 FORMS    += mainwindow.ui

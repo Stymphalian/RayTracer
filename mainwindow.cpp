@@ -72,7 +72,6 @@ void MainWindow::refreshMaterials(){
 
 /*
 TODO:
-    soft-shadows
     ray-cast selection
     material drop downs
 

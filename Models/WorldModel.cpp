@@ -10,6 +10,7 @@
 #include "Materials/MaterialFactory.h"
 #include "Utils/ObjFileReader.h"
 #include "Utils/jRand.h"
+#include "RayTracer/RayTracerConfig.h"
 
 WorldModel::WorldModel(){
     jRand& jrand = jRand::getInstance();
@@ -17,11 +18,11 @@ WorldModel::WorldModel(){
 
     // setup the camera
     camera.pos = jVec3(9.85341,21.2548,23.5946);
-    // camera.pos = jVec3(0.315971,1.31239,-0.0163554);
-
     camera.at = jVec3(0,0,0);
     camera.dir = (camera.at - camera.pos).normalize();
     camera.focalLength = 1500;
+
+    // config
 
     root = NULL;
     setupWorld();
@@ -29,7 +30,8 @@ WorldModel::WorldModel(){
 }
 
 WorldModel::WorldModel(const WorldModel& other) :
-    camera(other.camera)
+    camera(other.camera),
+    config(other.config)
 {
     root = new SceneNode(*other.root);
     setupLights();
@@ -164,13 +166,13 @@ void WorldModel::setupWorld()
         // n->localTransform.translate(-10,10,-5);
         // root->addChild(n);
 
-        // n = new SceneNode();
-        // n->sceneObject = new LightSource(new PrimitiveSphere(jVec3(0,0,0),0.1),1.0f);
-        // n->sceneObject->isLight = true;
-        // n->sceneObject->material = matFact.get("WHITELIGHT");
-        // //n->localTransform.translate(8,8,5);
-        // n->localTransform.translate(9,9,6.6);
-        // root->addChild(n);
+        n = new SceneNode();
+        n->sceneObject = new LightSource(new PrimitiveSphere(jVec3(0,0,0),0.1),1.0f);
+        n->sceneObject->isLight = true;
+        n->sceneObject->material = matFact.get("WHITELIGHT");
+        //n->localTransform.translate(8,8,5);
+        n->localTransform.translate(9,9,6.6);
+        root->addChild(n);
 
 
             // n = new SceneNode();
@@ -202,6 +204,7 @@ void WorldModel::setupWorld()
             n = new SceneNode();
             // n->sceneObject = new LightSource(new PrimitiveSphere(jVec3(0,0,0),0.1),1.0f);
             n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,-1,0),jVec3(1,-1,0),jVec3(1,1,0),jVec3(-1,1,0)),1.0f);
+            ((LightSource*)n->sceneObject)->setIsAreaLightSource(true);
             // n->sceneObject = new LightSource(createLightMesh(),1.0f);
             // n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,0,-1),jVec3(0,0,0),jVec3(0,1,0),jVec3(-1,1,-1)),1.0f);
             n->sceneObject->isLight = true;
@@ -224,6 +227,12 @@ void WorldModel::_setupLights(std::vector<LightSource*>& lights, SceneNode* node
 {
     if(node->sceneObject != NULL && node->sceneObject->isLight){
         LightSource* light = (LightSource*) node->sceneObject;
+
+        if(light->isAreaLightSource()){
+            int rows = sqrt(config.numSoftShadowSamples);
+            light->generateSamples(rows,rows);
+        }
+
         lights.push_back(light);
     }
 
@@ -247,7 +256,6 @@ void WorldModel::flatten()
     jMat4 transform;
     transform.toidentity();
     root->flatten(transform);
-    // lights
 }
 
 void WorldModel::reload(){

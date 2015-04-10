@@ -21,10 +21,11 @@ public:
     jVec3 getEmmitance();
     bool isDirectional();
 
-
+    // samples for soft-shadowing..
     bool isAreaLightSource();
+    void setIsAreaLightSource(bool value);
+    void generateSamples(int rows, int cols);
     jVec3 getSamplePoint(int i);
-    std::vector<jVec3> sample_points;
 
     // from Primitive
     virtual void draw(jMat4& transform);
@@ -34,6 +35,9 @@ public:
     virtual void flatten(jMat4& transform);
     virtual LightSource* clone() const;
 
+protected:
+    std::vector<jVec3> _sample_points;
+    bool _is_area_light_source;
 };
 
 #endif

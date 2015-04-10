@@ -37,21 +37,7 @@ LightSource::LightSource(Primitive* wrapped, float intensity) : Primitive(){
         }
     }
 
-    if( isAreaLightSource()){
-        jRand& jrand = jRand::getInstance();
-        PrimitiveTriMesh* m = (PrimitiveTriMesh*)this->wrapped;
-        jVec3 c = m->vertex_pool[0];
-        jVec3 a = (m->vertex_pool[1] - c)/6;
-        jVec3 b = (m->vertex_pool[3] - c)/6;
-        jVec3 v;
-        sample_points.clear();
-        for(float row = 0; row < 6; ++row){
-            for(float col = 0; col < 6; ++col){
-                v = c + (col+jrand())*a + (row+jrand())*b;
-                sample_points.push_back(v);
-            }
-        }
-    }
+    _is_area_light_source = false;
 }
 
 LightSource::LightSource(const LightSource& other): Primitive(other),
@@ -62,7 +48,8 @@ LightSource::LightSource(const LightSource& other): Primitive(other),
     light_num = other.light_num;
     intensity = other.intensity;
 
-    sample_points = other.sample_points;
+    _sample_points = other._sample_points;
+    _is_area_light_source = other._is_area_light_source;
 }
 
 
@@ -70,6 +57,8 @@ LightSource::~LightSource(){
     delete wrapped;
     lights_taken[light_num] = false;
     glDisable(light_enums[light_num]);
+
+    _sample_points.clear();
 }
 
 jVec3 LightSource::getDirection(jVec3& hitPoint){
@@ -94,15 +83,15 @@ void LightSource::draw(jMat4& transform){
     glLightfv(light_enums[light_num],GL_POSITION,vec);
     glPopMatrix();
 
-    v2 = this->material.ambient.outerProduce(this->material.color);
+    v2 = this->material.ambient.outerProduct(this->material.color);
     v2.toOpenGLFormat(vec);
     glLightfv(light_enums[light_num],GL_AMBIENT,vec);
 
-    v2 = this->material.diffuse.outerProduce(this->material.color);
+    v2 = this->material.diffuse.outerProduct(this->material.color);
     v2.toOpenGLFormat(vec);
     glLightfv(light_enums[light_num],GL_DIFFUSE,vec);
 
-    v2 = this->material.specular.outerProduce(this->material.color);
+    v2 = this->material.specular.outerProduct(this->material.color);
     v2.toOpenGLFormat(vec);
     glLightfv(light_enums[light_num],GL_SPECULAR,vec);
 
@@ -126,8 +115,11 @@ void LightSource::flatten(jMat4& transform){
     this->isFlat = true;
     this->wrapped->flatten(transform);
 
-    for(int i = 0; i < (int) sample_points.size(); ++i){
-        sample_points[i] = sample_points[i]*transform;
+    if( isAreaLightSource()){
+        // flatten the sample points as well
+        for(int i = 0; i < (int) _sample_points.size(); ++i){
+            _sample_points[i] = _sample_points[i]*transform;
+        }
     }
 }
 
@@ -139,12 +131,37 @@ bool LightSource::isDirectional(){
     return true;
 }
 
+
+// ----------------
+// Area Light Source stuff...
+// ----------------
 bool LightSource::isAreaLightSource(){
-    return true;
+    return _is_area_light_source;
+}
+void LightSource::setIsAreaLightSource(bool value){
+    _is_area_light_source =value;
 }
 
-jVec3 LightSource::getSamplePoint(int index){
-    return sample_points[index];
+void LightSource::generateSamples(int rows,int cols){
+    // HACK! Hard-coded to thinking that the shape is a plane
+    // if it is an area light.
+    // TODO: Make this general, so that we can use an arbitrary trimesh as a light
+    jRand& jrand = jRand::getInstance();
+    PrimitiveTriMesh* m = (PrimitiveTriMesh*)this->wrapped;
+    jVec3 v;
+    jVec3 c = m->vertex_pool[0];
+    jVec3 a = (m->vertex_pool[1] - c)/cols;
+    jVec3 b = (m->vertex_pool[3] - c)/rows;
+    _sample_points.clear();
+    for(float row = 0; row < rows; ++row){
+        for(float col = 0; col < cols; ++col){
+            v = c + (col+jrand())*a + (row+jrand())*b;
+            _sample_points.push_back(v);
+        }
+    }
+}
+jVec3 LightSource::getSamplePoint(int i){
+    return _sample_points[i];
 }
 
 

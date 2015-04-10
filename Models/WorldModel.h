@@ -5,6 +5,7 @@
 #include "LightSource.h"
 #include "Camera.h"
 #include "SceneNode.h"
+#include "../RayTracer/RayTracerConfig.h"
 
 class WorldModel{
 public:
@@ -14,6 +15,7 @@ public:
 
     // variables
     Camera camera;
+    RayTracerConfig config;
     SceneNode* root;
     std::vector<LightSource*> lights;
 

@@ -9,18 +9,8 @@
 #include "Utils/jrand.h"
 #include "../glwidget.h"
 
-RayTracer::RayTracer(): QObject(0),epsilon(0.001f){
-    min_dist= 0.001f;
-    max_dist = 2000.0f;
-    max_depth = 3;
-    defaultRefractionIndex = 1.0f;
+RayTracer::RayTracer(): QObject(0){ }
 
-    jitterSamplingEnabled = true;
-    numberJitterRows = 4;
-    numberJitterCols = 4;
-    softShadowsEnabled = true;
-    numSoftShadowSamples = 16;
-}
 RayTracer::~RayTracer(){
     //qDebug() << "destroying ray tracer " << thread()->currentThreadId();
     //qDebug() << sum << " " << count << " " << sum/count;
@@ -34,6 +24,7 @@ void RayTracer::render(int id,QImage* ca,WorldModel* model,int start_row,int end
     this->scene = model->root;;
     this->lights = &model->lights;
     this->camera = &model->camera;
+    this->config = &model->config;
     this->canvas = ca;
 
     this->start_row = start_row;
@@ -46,38 +37,40 @@ void RayTracer::render(int id,QImage* ca,WorldModel* model,int start_row,int end
     ray.calcUVW((camera->at - camera->pos),jVec3(0,1,0));
     jRand& jrand = jRand::getInstance();
 
-// loop through each pixel
+    // loop through each pixel
     for (int row = start_row; row <= end_row; ++row){
         for(int col = 0; col < renderWidth; ++col){
-            if( jitterSamplingEnabled == false){
+
+            if( config->jitterSamplingEnabled == false)
+            {
                 ray.calcRay(renderWidth,renderHeight,col,renderHeight - row,camera->pos,camera->focalLength);
                 ray.dir.normalize();
-                ray.refractIndex= defaultRefractionIndex;
-                pixelColor = trace(ray,max_depth);
+                ray.refractIndex= config->defaultRefractionIndex;
+                pixelColor = trace(ray,config->max_depth);
 
-                // set the pixel color
-                canvas->setPixel(col,row,qRgb(pixelColor[0]*255,pixelColor[1]*255,pixelColor[2]*255));
-            }else{
-
+            }
+            else
+            {
                 // jitter for 16 samples; for antialiasing effects.
                 pixelColor = jVec3(0,0,0);
-                for(int p = 0; p < numberJitterCols; ++p){
-                    for(int q = 0; q< numberJitterRows; ++q){
+                for(int p = 0; p < config->numberJitterCols; ++p){
+                    for(int q = 0; q< config->numberJitterRows; ++q){
                         ray.calcRay(renderWidth,renderHeight,
-                                            col + (p + jrand())/numberJitterCols,
-                                            (renderHeight - row) + (q + jrand())/numberJitterRows,
+                                            col + (p + jrand())/config->numberJitterCols,
+                                            (renderHeight - row) + (q + jrand())/config->numberJitterRows,
                                             camera->pos,camera->focalLength);
                         ray.dir.normalize();
-                        ray.refractIndex = defaultRefractionIndex;
-                        pixelColor += trace(ray,max_depth);
+                        ray.refractIndex = config->defaultRefractionIndex;
+                        pixelColor += trace(ray,config->max_depth);
                     }
                 }
 
                 // average out the pixel color
-                pixelColor = pixelColor/(numberJitterRows*numberJitterCols);
-                // set the pixel color
-                canvas->setPixel(col,row,qRgb(pixelColor[0]*255,pixelColor[1]*255,pixelColor[2]*255));
+                pixelColor = pixelColor/(config->numberJitterRows*config->numberJitterCols);
             }
+
+            // set the pixel color
+            canvas->setPixel(col,row,qRgb(pixelColor[0]*255,pixelColor[1]*255,pixelColor[2]*255));
         }
 
         // update the progress bar
@@ -98,7 +91,7 @@ jVec3 RayTracer::trace(Ray& ray,int depth){
         return backgroundColor;
     }
 
-    hitRecord = scene->queryScene(ray,min_dist,max_dist);
+    hitRecord = scene->queryScene(ray,config->min_dist,config->max_dist);
     if(hitRecord.hit == false){
         pixelColor += backgroundColor;
     }else{
@@ -144,20 +137,28 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
         new_ray.origin = hitPoint;
         jVec3 light_ray;
 
-        //int n = (softShadowsEnabled) ? numSoftShadownSamples : 1;
-        int n = (softShadowsEnabled) ?  36 : 1;
-
+        int n = (config->softShadowsEnabled) ? config->numSoftShadowSamples : 1;
+        int rows = sqrt(config->numSoftShadowSamples);
         jVec3 shadowColor(0,0,0);
 
         for(int i = 0; i< n; ++i){
+
+            // determine the light hit point and the hitPoint
             jVec3 light_hit_point = light->getSamplePoint(i);
-            jVec3 origin_hitPoint = jVec3(hitPoint[0] + jrand()/6, hitPoint[1] + jrand()/6, hitPoint[2] + jrand()/6);
-            // jVec3 light_hit_point = light->getOrigin();
+            jVec3 origin_hitPoint = jVec3(hitPoint[0] + jrand()/rows, hitPoint[1] + jrand()/rows, hitPoint[2] + jrand()/rows);
+            if( config->softShadowsEnabled){
+                light_hit_point = light->getSamplePoint(i);
+                origin_hitPoint = jVec3(hitPoint[0] + jrand()/rows, hitPoint[1] + jrand()/rows, hitPoint[2] + jrand()/rows);
+            }else{
+                light_hit_point = light->getOrigin();
+                origin_hitPoint = hitPoint;
+            }
+
             jVec3 light_ray = (light_hit_point - origin_hitPoint).normalize();
 
             new_ray.origin = origin_hitPoint;
             new_ray.dir = light_ray;
-            HitRecord shadowHit = scene->queryScene(new_ray,min_dist + 0.01f, max_dist);
+            HitRecord shadowHit = scene->queryScene(new_ray,config->min_dist + 0.01f, config->max_dist);
             if( isInShadow(shadowHit,*light,new_ray) == false){
                 // diffuse = I * K * (N*L)
                 shadowColor += light->intensity*matcolor.outerProduct(material.diffuse)*fmax(light_ray*surfaceNormal,0);
@@ -177,19 +178,11 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
     }
 
     // reflection + refraction
-   jVec3 reflectRefractColor(0,0,0);
-   if( material.reflection > 0.0f || material.refraction > 0.0f){
-       reflectRefractColor = reflectRefract(ray,hit,depth,surfaceNormal,material,hitPoint);
-   }
-   pixelColor += reflectRefractColor;
-
-    // reflection
-    // jVec3 reflectColor(0,0,0);
-    // if( material.reflection > 0.0f){
-    //     Ray reflectRay = ray.reflect(hitPoint,surfaceNormal);
-    //     reflectColor += material.reflection*trace(reflectRay,depth-1);
-    // }
-    // pixelColor += reflectColor;
+    jVec3 reflectRefractColor(0,0,0);
+    if( material.reflection > 0.0f || material.refraction > 0.0f){
+        reflectRefractColor = reflectRefract(ray,hit,depth,surfaceNormal,material,hitPoint);
+    }
+    pixelColor += reflectRefractColor;
 
     pixelColor[0]=fmin(pixelColor[0],1);
     pixelColor[1]=fmin(pixelColor[1],1);
