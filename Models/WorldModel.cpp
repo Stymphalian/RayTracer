@@ -106,59 +106,69 @@ SceneNode* WorldModel::load_main_scene()
     n->sceneObject->material = matFact.get("BLUEGLASS");
     n->localTransform.toidentity();
     n->localTransform.scale(3,3,3);
-    n->localTransform.translate(-7,1,-5);
+    // n->localTransform.translate(-7,1,-5);
+    n->localTransform.translate(-5,1,-3);
     root->addChild(n);
 
     n = new SceneNode();
     n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1.0f);
-    n->sceneObject->material = matFact.get("GREENGLASS");
+    n->sceneObject->material = matFact.get("PINE");
     n->localTransform.toidentity();
-    n->localTransform.scale(3,3,3);
-    n->localTransform.translate(7,1,12);
+    n->localTransform.translate(-6,0,-9);
     root->addChild(n);
+
+    // n = new SceneNode();
+    // n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1.0f);
+    // n->sceneObject->material = matFact.get("GREENGLASS");
+    // n->localTransform.toidentity();
+    // n->localTransform.scale(3,3,3);
+    // n->localTransform.translate(7,1,12);
+    // root->addChild(n);
 
     // bottom plane
     n = new SceneNode();
     n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
     n->sceneObject->material = matFact.get("MARBLE");
-    n->localTransform.scale(10,10,20);
-    n->localTransform.translate(0,-2,10);
-    root->addChild(n);
-
-    // left wall
-    n = new SceneNode();
-    n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
-    n->sceneObject->material = matFact.get("REDMARBLE");
-    n->localTransform.scale(10,10,20);
-    n->localTransform.rotate(jVec3(0,0,1),90*pi/180);
-    n->localTransform.translate(-10,8,10);
-    root->addChild(n);
-
-    // right wall
-    n = new SceneNode();
-    n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
-    n->sceneObject->material = matFact.get("GREENMARBLE");
-    n->localTransform.scale(10,10,20);
-    n->localTransform.rotate(jVec3(0,0,1),-90*pi/180);
-    n->localTransform.translate(10,8,10);
-    root->addChild(n);
-
-    // // back wall
-    n = new SceneNode();
-    n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
-    n->sceneObject->material = matFact.get("BLUEMARBLE");
+    //n->localTransform.scale(10,10,20);
     n->localTransform.scale(10,10,10);
-    n->localTransform.rotate(jVec3(1,0,0),90*pi/180);
-    n->localTransform.translate(0,8,-10);
+    // n->localTransform.translate(0,-2,10);
+    n->localTransform.translate(0,-2,0);
     root->addChild(n);
 
-    // bottom plane
-    n = new SceneNode();
-    n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
-    n->sceneObject->material = matFact.get("MARBLE");
-    n->localTransform.scale(10,10,20);
-    n->localTransform.translate(0,18,10);
-    root->addChild(n);
+    // // left wall
+    // n = new SceneNode();
+    // n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
+    // n->sceneObject->material = matFact.get("REDMARBLE");
+    // n->localTransform.scale(10,10,20);
+    // n->localTransform.rotate(jVec3(0,0,1),90*pi/180);
+    // n->localTransform.translate(-10,8,10);
+    // root->addChild(n);
+
+    // // right wall
+    // n = new SceneNode();
+    // n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
+    // n->sceneObject->material = matFact.get("GREENMARBLE");
+    // n->localTransform.scale(10,10,20);
+    // n->localTransform.rotate(jVec3(0,0,1),-90*pi/180);
+    // n->localTransform.translate(10,8,10);
+    // root->addChild(n);
+
+    // // // back wall
+    // n = new SceneNode();
+    // n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
+    // n->sceneObject->material = matFact.get("BLUEMARBLE");
+    // n->localTransform.scale(10,10,10);
+    // n->localTransform.rotate(jVec3(1,0,0),90*pi/180);
+    // n->localTransform.translate(0,8,-10);
+    // root->addChild(n);
+
+    // // bottom plane
+    // n = new SceneNode();
+    // n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
+    // n->sceneObject->material = matFact.get("MARBLE");
+    // n->localTransform.scale(10,10,20);
+    // n->localTransform.translate(0,18,10);
+    // root->addChild(n);
 
     n = new SceneNode();
     n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-2,-1,0),jVec3(1,-1,0),jVec3(2,1,0),jVec3(-1,1,0)),1.0f);
@@ -230,8 +240,8 @@ SceneNode* WorldModel::load_obj_scene()
 }
 
 void WorldModel::setupWorld(){
-   // root = load_main_scene();
-    root = load_obj_scene();
+   root = load_main_scene();
+    // root = load_obj_scene();
 }
 
 

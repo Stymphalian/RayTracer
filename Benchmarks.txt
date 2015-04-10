@@ -1,0 +1,23 @@
+Results:
+Threads     Time Taken(ms)
+1           71441
+2           52608
+3           57458
+4           50402
+5           42767
+6           43707
+7           37139
+8           38094
+
+As can be seen multi-threading provides significant improvements to rendering times.
+From 1 thread to 8 threads we see around 1.8 times increase in speed.
+We note that the increases in speed are not linear. The gains from 1 thread to 2
+threads were significant (~1.35),but the gains between from 6 to 7 threads were less so.
+We also note several cases in which the additional thread actually decreases perfomance.
+This may be accounted for by several factors:
+    - Bad testing. These data points were only sampled once.
+    - My implmentation of the threads splits the work unevenly amoung the threads.
+        For example, one thread may have very little work and finish early,while
+        the other threads are given a heavier workload.This causes cases in which
+        even though n threads are created,some of the threads may terminate early
+        and not contribute to the processing.
