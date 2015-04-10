@@ -144,9 +144,9 @@ jVec3 RayTracer::shade(Ray& ray,HitRecord& hit,int depth){
         for(int i = 0; i< n; ++i){
 
             // determine the light hit point and the hitPoint
-            jVec3 light_hit_point = light->getSamplePoint(i);
-            jVec3 origin_hitPoint = jVec3(hitPoint[0] + jrand()/rows, hitPoint[1] + jrand()/rows, hitPoint[2] + jrand()/rows);
-            if( config->softShadowsEnabled){
+            jVec3 light_hit_point;
+            jVec3 origin_hitPoint;
+            if( config->softShadowsEnabled && light->isAreaLightSource()){
                 light_hit_point = light->getSamplePoint(i);
                 origin_hitPoint = jVec3(hitPoint[0] + jrand()/rows, hitPoint[1] + jrand()/rows, hitPoint[2] + jrand()/rows);
             }else{

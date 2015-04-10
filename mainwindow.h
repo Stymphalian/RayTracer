@@ -19,6 +19,7 @@ public:
 protected:
     WorldModel model;
     void keyPressEvent(QKeyEvent *);
+    void uploadSettingsToGui();
 
 private:
     Ui::MainWindow *ui;
@@ -26,6 +27,13 @@ private slots:
     void save_as(bool);
     void ray_trace(bool);
     void refreshMaterials();
+
+    void handleAntiAliasFlag(int);
+    void handleSoftShadowsFlag(int);
+    void handleSoftShadowsNumber(int);
+    void handleAntiAliasNumber(int);
+    void handleRecursionDepth(int);
+
 };
 
 #endif // MAINWINDOW_H

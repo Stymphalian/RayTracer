@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionBegin_Ray_Trace,SIGNAL(triggered(bool)),this,SLOT(ray_trace(bool)));
     ui->widget->setModel(&model);
     ui->widget_2->setModel(&model);
+    uploadSettingsToGui();
 }
 
 MainWindow::~MainWindow()
@@ -69,14 +70,35 @@ void MainWindow::refreshMaterials(){
   model.reload();
 }
 
+void MainWindow::uploadSettingsToGui(){
+    ui->antiAliasSpinBox->setValue(model.config.numberJitterCols);
+    ui->antiAliasCheckBox->setChecked(model.config.jitterSamplingEnabled);
+    ui->softShadowsCheckBox->setChecked(model.config.softShadowsEnabled);
+    ui->softShadowsComboBox->setCurrentIndex(sqrt(model.config.numSoftShadowSamples)-1);
+    ui->maxDepthSpinBox->setValue(model.config.max_depth);
+}
+
+void MainWindow::handleAntiAliasFlag(int i){
+    model.config.jitterSamplingEnabled = (i != 0);
+}
+void MainWindow::handleSoftShadowsFlag(int i){
+    model.config.softShadowsEnabled = (i != 0);
+}
+void MainWindow::handleSoftShadowsNumber(int i){
+    model.config.numSoftShadowSamples = (i+1)*(i+1);
+}
+void MainWindow::handleAntiAliasNumber(int i){
+    model.config.numberJitterRows = i;
+    model.config.numberJitterCols = i;
+}
+void MainWindow::handleRecursionDepth(int i){
+    if( i <= 0){return;}
+    model.config.max_depth = i;
+}
+
 
 /*
 TODO:
-    ray-cast selection
-    material drop downs
-
-    room-like area + reflective sphere
-    find a good .obj file
     benchmark performance
 
 FIXES:

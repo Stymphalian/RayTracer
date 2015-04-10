@@ -17,7 +17,10 @@ WorldModel::WorldModel(){
     jrand.init(400);
 
     // setup the camera
-    camera.pos = jVec3(9.85341,21.2548,23.5946);
+    // camera.pos = jVec3(9.85341,21.2548,23.5946);
+    camera.pos = jVec3(0.61947,20.9607,74.3494);
+    // camera.pos = jVec3(365.294,222.424,319.676);
+
     camera.at = jVec3(0,0,0);
     camera.dir = (camera.at - camera.pos).normalize();
     camera.focalLength = 1500;
@@ -82,144 +85,153 @@ PrimitiveTriMesh* createLightMesh(){
     return mesh;
 }
 
-void WorldModel::setupWorld()
+SceneNode* WorldModel::load_main_scene()
 {
     MaterialFactory& matFact = MaterialFactory::getInstance();
-    root = new SceneNode();
+    SceneNode* root = new SceneNode();
     root->sceneObject = NULL;
     SceneNode* n;
 
-        // n = new SceneNode();
-        // n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
-        // n->sceneObject->material = matFact.get("WOOD");
-        // // n->sceneObject->material = matFact.get(MaterialFactory::GLASS);
-        // n->localTransform.toidentity();
-        // n->localTransform.scale(2,2,2);
-        // n->localTransform.translate(0,0,0);
-        // root->addChild(n);
+    // create three spheres
+    n = new SceneNode();
+    n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1.0f);
+    n->sceneObject->material = matFact.get("GLASS");
+    n->localTransform.toidentity();
+    n->localTransform.scale(3,3,3);
+    n->localTransform.translate(0,1,0);
+    root->addChild(n);
 
-        // n = new SceneNode();
-        // n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
-        // n->sceneObject->material = matFact.get("PINE");
-        // n->localTransform.toidentity();
-        // // n->localTransform.scale(2,2,2);
-        // // n->localTransform.translate(3,3,2.2);
-        // n->localTransform.translate(3,3,1.2);
-        // root->addChild(n);
+    n = new SceneNode();
+    n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1.0f);
+    n->sceneObject->material = matFact.get("BLUEGLASS");
+    n->localTransform.toidentity();
+    n->localTransform.scale(3,3,3);
+    n->localTransform.translate(-7,1,-5);
+    root->addChild(n);
 
-        // n = new SceneNode();
-        // n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1);
-        // n->sceneObject->material = matFact.get("PINE");
-        // n->localTransform.toidentity();
-        // // n->localTransform.scale(2,2,2);
-        // // n->localTransform.translate(3,3,2.2);
-        // n->localTransform.translate(-1,0,-3);
-        // root->addChild(n);
+    n = new SceneNode();
+    n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1.0f);
+    n->sceneObject->material = matFact.get("GREENGLASS");
+    n->localTransform.toidentity();
+    n->localTransform.scale(3,3,3);
+    n->localTransform.translate(7,1,12);
+    root->addChild(n);
 
-        // n = new SceneNode();
-        // n->sceneObject = new PrimitiveTriangle(jVec3(-2,1,0),jVec3(0,0,1),jVec3(0,0,-1));
-        // n->sceneObject->material = matFact.get("PINE");
-        // n->localTransform.scale(3,3,3);
-        // n->localTransform.translate(0,-1,-3);
-        // root->addChild(n);
+    // bottom plane
+    n = new SceneNode();
+    n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
+    n->sceneObject->material = matFact.get("MARBLE");
+    n->localTransform.scale(10,10,20);
+    n->localTransform.translate(0,-2,10);
+    root->addChild(n);
 
-        // n = new SceneNode();
-        // n->sceneObject = createMesh();
-        // n->sceneObject->material = matFact.get("SILVER");
-        // n->localTransform.scale(3,3,3);
-        // n->localTransform.translate(0,5,0);
-        // root->addChild(n);
+    // left wall
+    n = new SceneNode();
+    n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
+    n->sceneObject->material = matFact.get("REDMARBLE");
+    n->localTransform.scale(10,10,20);
+    n->localTransform.rotate(jVec3(0,0,1),90*pi/180);
+    n->localTransform.translate(-10,8,10);
+    root->addChild(n);
 
-        // n = new SceneNode();
-        // n->sceneObject = new PrimitiveCube(jVec3(-1,-1,1),jVec3(1,1,-1));
-        // n->sceneObject->material = matFact.get("CHARCOAL");
-        // n->localTransform.scale(0.5,0.5,0.5);
-        // n->localTransform.translate(-1.5,8,0);
-        // root->addChild(n);
+    // right wall
+    n = new SceneNode();
+    n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
+    n->sceneObject->material = matFact.get("GREENMARBLE");
+    n->localTransform.scale(10,10,20);
+    n->localTransform.rotate(jVec3(0,0,1),-90*pi/180);
+    n->localTransform.translate(10,8,10);
+    root->addChild(n);
 
-        // n = new SceneNode();
-        // n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
-        // n->sceneObject->material = matFact.get("BRONZE");
-        // n->localTransform.scale(10,10,10);
-        // n->localTransform.translate(0,-2,0);
-        // root->addChild(n);
+    // // back wall
+    n = new SceneNode();
+    n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
+    n->sceneObject->material = matFact.get("BLUEMARBLE");
+    n->localTransform.scale(10,10,10);
+    n->localTransform.rotate(jVec3(1,0,0),90*pi/180);
+    n->localTransform.translate(0,8,-10);
+    root->addChild(n);
 
-        // // ObjFileReader reader;
-        // // ObjFileReader::Obj_Model obj_model;
-        // // // reader.read("icosahedron.obj",&obj_model);
-        // // reader.read("data/lamp.obj",&obj_model);
-        // // n = new SceneNode();
-        // // PrimitiveTriMesh* mesh = new PrimitiveTriMesh();
-        // // mesh->fillTriMeshFromObjFile(obj_model);
-        // // n->sceneObject = mesh;
-        // // n->sceneObject->material = matFact.get("WOOD");
-        // // n->localTransform.scale(2,2,2);
-        // // n->localTransform.translate(5,5,0);
-        // // root->addChild(n);
+    // bottom plane
+    n = new SceneNode();
+    n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
+    n->sceneObject->material = matFact.get("MARBLE");
+    n->localTransform.scale(10,10,20);
+    n->localTransform.translate(0,18,10);
+    root->addChild(n);
 
-        // // // Creating a light
-        // n = new SceneNode();
-        // Primitive* p = new PrimitiveSphere(jVec3(0,0,0),0.1);
-        // n->sceneObject = new LightSource(p,1.0f);
-        // n->sceneObject->isLight = true;
-        // n->sceneObject->material = matFact.get("WHITELIGHT");
-        // n->localTransform.translate(-10,10,-5);
-        // root->addChild(n);
+    n = new SceneNode();
+    n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-2,-1,0),jVec3(1,-1,0),jVec3(2,1,0),jVec3(-1,1,0)),1.0f);
+    ((LightSource*)n->sceneObject)->setIsAreaLightSource(true);
+    n->sceneObject->isLight = true;
+    n->sceneObject->material = matFact.get("WHITELIGHT");
+    n->localTransform.rotate(jVec3(1,0,0),45*pi/180);
+    n->localTransform.translate(0,10,-6);
+    root->addChild(n);
 
-        n = new SceneNode();
-        n->sceneObject = new LightSource(new PrimitiveSphere(jVec3(0,0,0),0.1),1.0f);
-        n->sceneObject->isLight = true;
-        n->sceneObject->material = matFact.get("WHITELIGHT");
-        //n->localTransform.translate(8,8,5);
-        n->localTransform.translate(9,9,6.6);
-        root->addChild(n);
+    return root;
+
+}
+
+SceneNode* WorldModel::load_obj_scene()
+{
+    MaterialFactory& matFact = MaterialFactory::getInstance();
+    SceneNode* root = new SceneNode();
+    root->sceneObject = NULL;
+    SceneNode* n;
+
+    ObjFileReader reader;
+    ObjFileReader::Obj_Model obj_model;
+    reader.read("data/icosahedron.obj",&obj_model);
+    n = new SceneNode();
+    PrimitiveTriMesh* mesh = new PrimitiveTriMesh();
+    mesh->fillTriMeshFromObjFile(obj_model);
+    n->sceneObject = mesh;
+    n->sceneObject->material = matFact.get("BLUEMARBLE");
+    root->addChild(n);
+
+    n = new SceneNode();
+    mesh = new PrimitiveTriMesh();
+    mesh->fillTriMeshFromObjFile(obj_model);
+    n->sceneObject = mesh;
+    n->sceneObject->material = matFact.get("PINE");
+    n->localTransform.scale(2,2,2);
+    n->localTransform.translate(5,2,0);
+    root->addChild(n);
+
+    n = new SceneNode();
+    n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
+    n->sceneObject->material = matFact.get("MARBLE");
+    n->localTransform.scale(10,10,10);
+    n->localTransform.translate(0,-2,0);
+    root->addChild(n);
 
 
-            // n = new SceneNode();
-            // // n->sceneObject = new PrimitiveCube(jVec3(-1,-1,1),jVec3(1,1,-1));
-            // n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1.0f);
-            // n->sceneObject->material = matFact.get("GLASS");
-            // n->localTransform.toidentity();
-            // n->localTransform.scale(2,2,2);
-            // n->localTransform.translate(0,3.1,7);
-            // root->addChild(n);
+    // lights
+    n = new SceneNode();
+    n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,-1,0),jVec3(1,-1,0),jVec3(1,1,0),jVec3(-1,1,0)),1.0f);
+    ((LightSource*)n->sceneObject)->setIsAreaLightSource(true);
+    n->sceneObject->isLight = true;
+    n->sceneObject->material = matFact.get("WHITELIGHT");
+    n->localTransform.rotate(jVec3(1,0,0),45*pi/180);
+    n->localTransform.translate(100,50,60);
+    root->addChild(n);
 
-            n = new SceneNode();
-            // n->sceneObject = new PrimitiveCube(jVec3(-1,-1,1),jVec3(1,1,-1));
-            n->sceneObject = new PrimitiveSphere(jVec3(0,0,0),1.0f);
-            n->sceneObject->material = matFact.get("GLASS");
-            n->localTransform.toidentity();
-            n->localTransform.scale(2,2,2);
-            // n->localTransform.translate(0,3.1,-7);
-            n->localTransform.translate(0,0,0);
-            root->addChild(n);
+    n = new SceneNode();
+    n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,-1,0),jVec3(1,-1,0),jVec3(1,1,0),jVec3(-1,1,0)),1.0f);
+    ((LightSource*)n->sceneObject)->setIsAreaLightSource(true);
+    n->sceneObject->isLight = true;
+    n->sceneObject->material = matFact.get("WHITELIGHT");
+    n->localTransform.rotate(jVec3(1,0,0),45*pi/180);
+    n->localTransform.translate(20,100,-60);
+    root->addChild(n);
 
-            n = new SceneNode();
-            n->sceneObject = new PrimitivePlane(jVec3(1,0,1),jVec3(1,0,-1),jVec3(-1,0,-1),jVec3(-1,0,1));
-            n->sceneObject->material = matFact.get("MARBLE");
-            n->localTransform.scale(10,10,10);
-            n->localTransform.translate(0,-2,0);
-            root->addChild(n);
+    return root;
+}
 
-            n = new SceneNode();
-            // n->sceneObject = new LightSource(new PrimitiveSphere(jVec3(0,0,0),0.1),1.0f);
-            n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,-1,0),jVec3(1,-1,0),jVec3(1,1,0),jVec3(-1,1,0)),1.0f);
-            ((LightSource*)n->sceneObject)->setIsAreaLightSource(true);
-            // n->sceneObject = new LightSource(createLightMesh(),1.0f);
-            // n->sceneObject = new LightSource(new PrimitivePlane(jVec3(-1,0,-1),jVec3(0,0,0),jVec3(0,1,0),jVec3(-1,1,-1)),1.0f);
-            n->sceneObject->isLight = true;
-            n->sceneObject->material = matFact.get("WHITELIGHT");
-            // n->localTransform.translate(0,2,2);
-            n->localTransform.translate(0,4,-4);
-            root->addChild(n);
-
-            // n = new SceneNode();
-            // // n->sceneObject = new LightSource(new PrimitivePlane(jVec3(1,0,-1),jVec3(0,0,0),jVec3(0,1,0),jVec3(1,1,-1)),1.0f);
-            // n->sceneObject = new LightSource(new PrimitivePlane(jVec3(0,0,0),jVec3(1,0,-1),jVec3(1,1,-1),jVec3(0,1,0)),1.0f);
-            // n->sceneObject->isLight = true;
-            // n->sceneObject->material = matFact.get("WHITELIGHT");
-            // n->localTransform.translate(0,2,2);
-            // root->addChild(n);
+void WorldModel::setupWorld(){
+   // root = load_main_scene();
+    root = load_obj_scene();
 }
 
 

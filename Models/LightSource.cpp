@@ -160,6 +160,7 @@ void LightSource::generateSamples(int rows,int cols){
         }
     }
 }
+
 jVec3 LightSource::getSamplePoint(int i){
     return _sample_points[i];
 }
