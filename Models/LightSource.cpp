@@ -83,6 +83,7 @@ jVec3 LightSource::getEmmitance(){
 void LightSource::draw(jMat4& transform){
 
     glEnable(light_enums[light_num]);
+    jVec3 v2;
     GLfloat vec[4];
     vec[3] = 1.0f;
 
@@ -93,13 +94,16 @@ void LightSource::draw(jMat4& transform){
     glLightfv(light_enums[light_num],GL_POSITION,vec);
     glPopMatrix();
 
-    this->material.ambient.toOpenGLFormat(vec);
+    v2 = this->material.ambient.outerProduce(this->material.color);
+    v2.toOpenGLFormat(vec);
     glLightfv(light_enums[light_num],GL_AMBIENT,vec);
 
-    this->material.diffuse.toOpenGLFormat(vec);
+    v2 = this->material.diffuse.outerProduce(this->material.color);
+    v2.toOpenGLFormat(vec);
     glLightfv(light_enums[light_num],GL_DIFFUSE,vec);
 
-    this->material.specular.toOpenGLFormat(vec);
+    v2 = this->material.specular.outerProduce(this->material.color);
+    v2.toOpenGLFormat(vec);
     glLightfv(light_enums[light_num],GL_SPECULAR,vec);
 
     this->wrapped->material = this->material;

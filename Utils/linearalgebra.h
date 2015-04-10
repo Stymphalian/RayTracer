@@ -657,7 +657,7 @@ public:
       *this = (*this)*t;
     }
 
-    virtual void rotate(jVec3& v, jFlt theta){
+    virtual void rotate(jVec3 v, jFlt theta){
       jNorm3 n(v);
       jMat4 r(mRotateA,n,theta);
       *this = (*this)*r;
