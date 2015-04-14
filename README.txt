@@ -1,6 +1,12 @@
 Author: Jordan Yu (v00727036)
 Date:   April 9,2015
-For:    CSC305 Assignment 3
+
+Ray Tracer
+Implementation of a simple ray-tracer for my CSC305: Introduction to Computer
+Graphics class. 
+Using QT and C++.
+Feature list is given below.
+
 
 INSTRUCTIONS:
 To run this application you must copy the 'Data' directory into the build
